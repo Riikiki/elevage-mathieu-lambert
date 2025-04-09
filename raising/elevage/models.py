@@ -9,22 +9,9 @@ class elevage(models.Model):
     nbCage = models.IntegerField(default=0)
     funds = models.FloatField(default=0.0)
     foodQuantity = models.FloatField(default=0.0)
-
+    username = models.CharField(max_length=100, null=True, blank=True)
     def __str__(self):
         return self.name
 
     def get_absolute_url(self):
         return reverse("_detail", kwargs={"pk": self.pk})
-
-class player(models.Model):
-    
-    username = models.CharField(max_length=100, null=True, blank=True)
-    password = models.CharField(max_length=100, null=True, blank=True)
-    
-    inGameRaising = models.ForeignKey(elevage, on_delete=models.CASCADE)
-    
-    def __str__(self):
-        return self.name
-    
-    
-    

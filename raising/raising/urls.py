@@ -16,7 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from elevage import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('new/', views.new, name='new'),
 ]
