@@ -2,14 +2,14 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>New game</title>
+    <title>Nouvelle partie</title>
 </head>
 <body>
-    <h1>New game</h1>
+    <h1>Nouvelle partie</h1>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit">Start the game</button>
+        <button type="submit">Commencer</button>
     </form>
 </body>
 </html>

@@ -14,4 +14,4 @@ def nouveau(request):
         
         form = ElevageForm()
 
-    return render(request, 'elevage/nouveau.html', {'form': form})
+    return render(request, 'elevage/new.html', {'form': form})
