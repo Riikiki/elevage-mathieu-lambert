@@ -1,4 +1,4 @@
-# elevage-mathieu-lambert
+# Raising-mathieu-lambert
 
 ## 1. Objective
 The goal of this project is to implement the main features of an application using the techniques covered in previous sessions. The information provided here is intentionally brief. Please refer to the resources from previous sessions for additional guidance.
