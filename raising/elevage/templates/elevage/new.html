@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Nouvelle partie</title>
-</head>
-<body>
-    <h1>Nouvelle partie</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Commencer</button>
-    </form>
-</body>
-</html>
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Nouvelle Partie</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Démarrer la partie</button>
+  </form>
+{% endblock %}

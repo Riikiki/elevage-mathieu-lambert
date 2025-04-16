@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Tableau de bord - Elevage #{{ elevage.id }}</h1>
+  
+  <ul>
+    {% for field, value in elevage.getFieldsAndValues.items %}
+      <li>{{ field }}: {{ value }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
