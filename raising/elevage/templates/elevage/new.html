@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Initialisation</title>
+    <title>New game</title>
 </head>
 <body>
-    <h1>Welcome</h1>
-    <form method="post" action="{% url 'new' %}">
+    <h1>New game</h1>
+    <form method="post">
         {% csrf_token %}
-        <label for="username">Enter your Username</label>
-        <input type="text" id="username" name="username" required>
-        <button type="submit">Check</button>
+        {{ form.as_p }}
+        <button type="submit">Start the game</button>
     </form>
 </body>
 </html>
