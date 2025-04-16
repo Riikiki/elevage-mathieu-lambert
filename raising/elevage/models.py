@@ -1,17 +1,16 @@
 from django.db import models
-from django.urls import reverse
 
-# Create your models here.
-
-class elevage(models.Model):
+class Elevage(models.Model):
     
-    nbRabbit = models.IntegerField(default=0)
-    nbCage = models.IntegerField(default=0)
-    funds = models.FloatField(default=0.0)
-    foodQuantity = models.FloatField(default=0.0)
-    username = models.CharField(max_length=100, null=True, blank=True)
-    def __str__(self):
-        return self.name
+    nom = models.CharField(max_length=100, default='Partie sans nom')
+    
+    # Resources
+    nb_males = models.IntegerField(default=0)
+    nb_femelles = models.IntegerField(default=0)
+    quantite_nourriture = models.IntegerField(default=0)
+    nb_cages = models.IntegerField(default=0)
+    solde = models.IntegerField(default=0)
 
-    def get_absolute_url(self):
-        return reverse("_detail", kwargs={"pk": self.pk})
+    def __str__(self):
+        return self.nom
+
