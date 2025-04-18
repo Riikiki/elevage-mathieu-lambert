@@ -5,10 +5,13 @@
 
   <h2>Informations générales :</h2>
   <ul>
-    {% for field, value in elevage.getFieldsAndValues.items %}
-      <li><strong>{{ field }}:</strong> {{ value }}</li>
-    {% endfor %}
+  {% comment %} Trying to update along the changes but it doesn't work i want to throw myself out of the window {% endcomment %}
+  {% comment %} Nevermind I found it {% endcomment %}
+  {% for field, value in elevage.getFieldsAndValues.items%}
+    <li><strong>{{ field }}:</strong> {{ value }}</li>
+  {% endfor %}
   </ul>
+
 
   <h2>Individus :</h2>
   <ul>

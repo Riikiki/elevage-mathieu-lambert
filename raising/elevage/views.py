@@ -39,7 +39,7 @@ def nouveau(request):
 def dashboard(request, elevage_id):
     
     elevage = get_object_or_404(Elevage, id=elevage_id)
-    individus = elevage.individus.all()
+    individus = elevage.individus.filter(etat='PRESENT')
     form = Action()
     
     if request.method == 'POST':
@@ -78,13 +78,18 @@ def dashboard(request, elevage_id):
                     
                     for sold in soldMales:
                         sold.etat = 'VENDU'
-                        elevage.solde += 50 # Price not definitive
                         sold.save()
+                        sold.delete()
+                        sold.save()
+                        elevage.solde += 50 # Price not definitive
                     for sold in soldFemales:
                         sold.etat = 'VENDU'
-                        elevage.solde += 50 # Price not definitive
                         sold.save()
+                        sold.delete()
+                        sold.save()
+                        elevage.solde += 50 # Price not definitive
                     
+                    elevage.save()
                     return redirect('elevage_dashboard', elevage_id=elevage.id)
                     
     return render(request, 'elevage/dashboard.html', {'elevage': elevage, 'individus': individus, 'form' : form, 'elevage_fields': elevage.getFieldsAndValues()})

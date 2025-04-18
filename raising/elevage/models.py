@@ -14,16 +14,28 @@ class Elevage(models.Model):
     def __str__(self):
         return self.nom
     
+    def getMalesPresent(self):        
+        return self.individus.filter(sexe='M', etat='PRESENT').count()
+    
+    def getFemalesPresent(self):
+        return self.individus.filter(sexe='F', etat='PRESENT').count()
+    
     def getFieldsAndValues(self):
         
         return {
             "Nom de la partie": self.nom,
-            "Lapins mâles": self.nb_males,
-            "Lapins femelles": self.nb_femelles,
+            "Lapins mâles": self.getMalesPresent,
+            "Lapins femelles": self.getFemalesPresent,
             "Quantité de nourriture": f"{self.quantite_nourriture} kg",
             "Nombre de cages": self.nb_cages,
             "Solde": f"{self.solde} €",
         }
+        
+    
+    
+    
+        
+        
         
         
 
@@ -44,4 +56,9 @@ class Individu(models.Model):
             "Age": self.age,
             "État": self.etat,
         }
+    
+    def deleteSoldOrDead(self):
+        
+        sold = self.objects.get(etat='VENDU', elevage=self.elevage).delete()
+        dead = self.objects.get(etat='MORT', elevage=self.elevage).delete()
     
