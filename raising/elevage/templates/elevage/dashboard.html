@@ -1,11 +1,28 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1>Tableau de bord - Elevage #{{ elevage.id }}</h1>
-  
+  <h1>Détails de l'élevage "{{ elevage.nom }}"</h1>
+
+  <h2>Informations générales :</h2>
   <ul>
     {% for field, value in elevage.getFieldsAndValues.items %}
-      <li>{{ field }}: {{ value }}</li>
+      <li><strong>{{ field }}:</strong> {{ value }}</li>
     {% endfor %}
   </ul>
+
+  <h2>Individus :</h2>
+  <ul>
+    <p>Nombre d'individus trouvés : {{ individus|length }}</p>
+
+    {% for individu in individus %}
+      <li>
+        {{ individu.sexe }} — {{ individu.age }} mois —
+        {{ individu.etat }}
+      </li>
+    {% empty %}
+      <li>Aucun individu enregistré pour cet élevage.</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{% url 'elevage_liste' %}">← Retour à la liste</a>
 {% endblock %}
