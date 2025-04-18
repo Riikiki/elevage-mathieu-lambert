@@ -24,5 +24,25 @@
     {% endfor %}
   </ul>
 
+  <h2>Actions du tour</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Valider le tour</button>
+  </form>
+
+  {% if form.errors %}
+  <ul class="errorlist">
+    {% for field in form %}
+      {% for error in field.errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
   <a href="{% url 'elevage_liste' %}">Retour à la liste</a>
 {% endblock %}

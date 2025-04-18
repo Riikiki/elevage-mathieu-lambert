@@ -52,13 +52,13 @@ def dashboard(request, elevage_id):
             nbMales = individus.filter(sexe='M', etat='PRESENT').count()
             nbFemales = individus.filter(sexe='F', etat='PRESENT').count()
             
-            if action['vendre un lapin male'] > nbMales or action['vendre un lapin femelle'] > nbFemales: # Check if we have enough rabbits to sell
+            if action['SellMales'] > nbMales or action['SellFemales'] > nbFemales: # Check if we have enough rabbits to sell
                 
                 form.add_error(None, "Pas assez de lapins disponibles.")
                 
             else:
                 
-                totalAchat = action['acheter cage'] * 100 + action['acheter nourriture'] * 10 # Price not definitive
+                totalAchat = action['BuyCages'] * 100 + action['BuyFood'] * 10 # Price not definitive
                 
                 if totalAchat > elevage.solde: # Check if we have enough money to buy
                     
@@ -68,13 +68,13 @@ def dashboard(request, elevage_id):
                     
                     # Saving new values
                     elevage.solde -= totalAchat
-                    elevage.nb_cages += action['acheter cage']
-                    elevage.quantite_nourriture += action['acheter nourriture']
+                    elevage.nb_cages += action['BuyCages']
+                    elevage.quantite_nourriture -= action['BuyFood']
                     elevage.save()
                     
                     # Updating individus
-                    soldMales = individus.filter(sexe='M', etat='PRESENT')[:action['vendre un lapin males']]
-                    soldFemales = individus.filter(sexe='F', etat='PRESENT')[:action['vendre un lapin femelle']]
+                    soldMales = individus.filter(sexe='M', etat='PRESENT')[:action['SellMales']]
+                    soldFemales = individus.filter(sexe='F', etat='PRESENT')[:action['SellFemales']]
                     
                     for sold in soldMales:
                         sold.etat = 'VENDU'

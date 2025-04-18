@@ -20,15 +20,17 @@ class ElevageForm(forms.ModelForm):
 
 class Action(forms.Form):
     
-    action = forms.ChoiceField(
-        choices=[
-            ('vendre un lapin mâle', 'VendreMâle'),
-            ('vendre un lapin femelle', 'VendreFemelle'),
-            ('acheter nouriture', 'AcheterNourriture'),
-            ('acheter cage', 'AcheterCage'),
-        ],
+    SellMales = forms.IntegerField(min_value=0, required=False, label="Vendre un lapin mâle")
+    SellFemales = forms.IntegerField(min_value=0, required=False, label="Vendre un lapin femelle")
+    BuyCages = forms.IntegerField(min_value=0, required=False, label="Acheter des cages")
+    BuyFood = forms.IntegerField(min_value=0, required=False, label="Acheter de la nourriture")
+    
+    ## Custom clean method to ensure that "no answer" equals 0 and not "none" for comparison purposes
+    def clean(self):
+        cleaned_data = super().clean()
+        for key in cleaned_data:
+            if cleaned_data[key] is None:
+                cleaned_data[key] = 0
+        return cleaned_data
+    
         
-        label="Action à effectuer",
-        widget=forms.Select(attrs={'class': 'form-control'})
-        
-    )
