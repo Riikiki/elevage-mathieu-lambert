@@ -24,4 +24,24 @@ class Elevage(models.Model):
             "Nombre de cages": self.nb_cages,
             "Solde": f"{self.solde} €",
         }
+        
+        
 
+class Individu(models.Model):
+    
+    sexe = models.CharField(max_length=10, choices=[('M', 'Mâle'), ('F', 'Femelle')])
+    age = models.IntegerField(default=0)
+    etat = models.CharField(max_length=20, choices=[('PRESENT', 'Présent'),  ('VENDU', 'Vendu'), ('MORT', 'Mort'), ('GRAVIDE', 'Gravide')])
+    elevage = models.ForeignKey(Elevage, on_delete=models.CASCADE, related_name='individus')
+    
+    def __str__(self):
+        return self.sexe + " " + str(self.age) + " " + self.etat
+    
+    def getFieldsAndValues(self):
+        
+        return {
+            "Sexe": self.sexe,
+            "Age": self.age,
+            "État": self.etat,
+        }
+    
