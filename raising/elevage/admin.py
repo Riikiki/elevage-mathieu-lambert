@@ -1,5 +1,9 @@
 from django.contrib import admin
-from .models import Elevage
+from .models import Elevage, Individu
+
+
+admin.site.register(Elevage)
+admin.site.register(Individu)
 
 
 class ElevageAdmin(admin.ModelAdmin):
