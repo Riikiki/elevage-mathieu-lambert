@@ -21,3 +21,7 @@ def dashboard(request, elevage_id):
     elevage = get_object_or_404(Elevage, id=elevage_id)
 
     return render(request, 'elevage/dashboard.html', {'elevage': elevage})
+
+def liste(request):
+    elevages = Elevage.objects.all()
+    return render(request, 'elevage/liste.html', {'elevages': elevages})

@@ -4,7 +4,7 @@ class Elevage(models.Model):
     
     nom = models.CharField(max_length=100, default='Partie sans nom')
     
-    # Resources
+    # Ressources
     nb_males = models.IntegerField(default=0)
     nb_femelles = models.IntegerField(default=0)
     quantite_nourriture = models.IntegerField(default=0)

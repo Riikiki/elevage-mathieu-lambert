@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h1>Liste des élevages</h1>
+    <ul>
+        {% for elevage in elevages %}
+            <li>
+                <a href="{% url 'elevage_dashboard' elevage.id %}">
+                    {{ elevage.nom }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'elevage_new' %}">Créer un nouvel élevage</a>
+
+{% endblock content %}
