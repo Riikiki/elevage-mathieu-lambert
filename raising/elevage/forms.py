@@ -17,3 +17,18 @@ class ElevageForm(forms.ModelForm):
         widgets = {
             'nom': forms.TextInput(attrs={'placeholder': 'Ex : Mon élevage stratégique'}),
         }
+
+class Action(forms.Form):
+    
+    action = forms.ChoiceField(
+        choices=[
+            ('vendre un lapin mâle', 'VendreMâle'),
+            ('vendre un lapin femelle', 'VendreFemelle'),
+            ('acheter nouriture', 'AcheterNourriture'),
+            ('acheter cage', 'AcheterCage'),
+        ],
+        
+        label="Action à effectuer",
+        widget=forms.Select(attrs={'class': 'form-control'})
+        
+    )

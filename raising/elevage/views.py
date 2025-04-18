@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ElevageForm
+from .forms import ElevageForm, Action
 from .models import Elevage, Individu
 
 def nouveau(request):
@@ -40,7 +40,54 @@ def dashboard(request, elevage_id):
     
     elevage = get_object_or_404(Elevage, id=elevage_id)
     individus = elevage.individus.all()
-    return render(request, 'elevage/dashboard.html', {'elevage': elevage, 'individus': individus, 'elevage_fields': elevage.getFieldsAndValues()})
+    form = Action()
+    
+    if request.method == 'POST':
+        
+        form = Action(request.POST)
+        
+        if form.is_valid():
+            
+            action = form.cleaned_data
+            nbMales = individus.filter(sexe='M', etat='PRESENT').count()
+            nbFemales = individus.filter(sexe='F', etat='PRESENT').count()
+            
+            if action['vendre un lapin male'] > nbMales or action['vendre un lapin femelle'] > nbFemales: # Check if we have enough rabbits to sell
+                
+                form.add_error(None, "Pas assez de lapins disponibles.")
+                
+            else:
+                
+                totalAchat = action['acheter cage'] * 100 + action['acheter nourriture'] * 10 # Price not definitive
+                
+                if totalAchat > elevage.solde: # Check if we have enough money to buy
+                    
+                    form.add_error(None, "Pas assez d'argent.")
+                    
+                else:
+                    
+                    # Saving new values
+                    elevage.solde -= totalAchat
+                    elevage.nb_cages += action['acheter cage']
+                    elevage.quantite_nourriture += action['acheter nourriture']
+                    elevage.save()
+                    
+                    # Updating individus
+                    soldMales = individus.filter(sexe='M', etat='PRESENT')[:action['vendre un lapin males']]
+                    soldFemales = individus.filter(sexe='F', etat='PRESENT')[:action['vendre un lapin femelle']]
+                    
+                    for sold in soldMales:
+                        sold.etat = 'VENDU'
+                        elevage.solde += 50 # Price not definitive
+                        sold.save()
+                    for sold in soldFemales:
+                        sold.etat = 'VENDU'
+                        elevage.solde += 50 # Price not definitive
+                        sold.save()
+                    
+                    return redirect('elevage_dashboard', elevage_id=elevage.id)
+                    
+    return render(request, 'elevage/dashboard.html', {'elevage': elevage, 'individus': individus, 'form' : form, 'elevage_fields': elevage.getFieldsAndValues()})
 
 def liste(request):
     elevages = Elevage.objects.all()
