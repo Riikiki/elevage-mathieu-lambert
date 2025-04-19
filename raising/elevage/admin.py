@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Elevage, Individu
+from .models import Elevage, Individu, Rules
 
 
 admin.site.register(Elevage)
 admin.site.register(Individu)
+admin.site.register(Rules)
 
 
 class ElevageAdmin(admin.ModelAdmin):
