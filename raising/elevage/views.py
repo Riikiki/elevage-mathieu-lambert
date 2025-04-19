@@ -90,6 +90,8 @@ def dashboard(request, elevage_id):
                         elevage.solde += 50 # Price not definitive
                     
                     elevage.save()
+                    elevage.turnAction(action)
+                    elevage.save()
                     return redirect('elevage_dashboard', elevage_id=elevage.id)
                     
     return render(request, 'elevage/dashboard.html', {'elevage': elevage, 'individus': individus, 'form' : form, 'elevage_fields': elevage.getFieldsAndValues()})
