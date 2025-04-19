@@ -54,6 +54,18 @@ class Elevage(models.Model):
             "Solde": f"{self.solde} €",
         }
         
+    def reproduceRabbits(self, female, rules):
+        
+        if female.age >= rules.minAgeGravide and female.age <= rules.maxAgeGravide:
+            if randint(0, 1) == 1:
+                nbRabys = randint(1, rules.maxRabys)
+                for i in range(nbRabys):
+                    sexe = choice(['M', 'F'])
+                    age = 0
+                    etat = 'PRESENT'
+                    elevage = self
+                    Individu.objects.create(sexe=sexe, age=age, etat=etat, elevage=elevage)
+        
     def turnAction(self, action):
         
         rules = Rules.objects.first()
@@ -66,31 +78,62 @@ class Elevage(models.Model):
         
         # Consumption of food
         totalConsumption = 0
+        consumptionPerIndividuals = []
+        
         for individu in individus:
             if individu.age == 1:
-                totalConsumption += rules.consumptionFood1Month
+                consumption = rules.consumptionFood1Month
             elif individu.age == 2:
-                totalConsumption += rules.consumptionFood2Month
+                consumption = rules.consumptionFood2Month
             else:
-                totalConsumption += rules.consumptionFood3Month
-        # Update self quantite_nourriture
-        self.quantite_nourriture = max(0, self.quantite_nourriture - totalConsumption)      
+                consumption = rules.consumptionFood3Month
+        
+            consumptionPerIndividuals.append((individu, consumption))
+            totalConsumption += consumption
+        
+        if totalConsumption <= self.quantite_nourriture:
+            self.quantite_nourriture -= totalConsumption
+        else:
+            #sort the individuals by age and remove the oldest ones first
+            sortedIndividuals = sorted(consumptionPerIndividuals, key=lambda x: x[0].age, reverse=True) #reverse=true to sort by age descending
+            remainingFood = self.quantite_nourriture
+            
+            for individu, consumption in sortedIndividuals:
+                
+                if remainingFood >= consumption:
+                    
+                    remainingFood -= consumption
+                    self.quantite_nourriture = remainingFood
+                    individu.save()
+                    
+                else:
+                    
+                    individu.etat = 'MORT'
+                    individu.save()  
+                        
         self.save()
         
         # Reproduction
         females = self.individus.filter(sexe='F', etat='PRESENT')
         males = self.individus.filter(sexe='M', etat='PRESENT')
         
-        for female in females:
-            if female.age >= rules.minAgeGravide and female.age <= rules.maxAgeGravide:
-                if randint(0, 1) == 1:
-                    nbRabys = randint(1, rules.maxRabys)
-                    for i in range(nbRabys):
-                        sexe = choice(['M', 'F'])
-                        age = 0
-                        etat = 'PRESENT'
-                        elevage = self
-                        Individu.objects.create(sexe=sexe, age=age, etat=etat, elevage=elevage)
+        MFDiff = females.count() - males.count()
+        
+        if MFDiff == 0:
+    
+            for female in females:
+                self.reproduceRabbits(female, rules)
+        
+        else:
+            
+            nbCouple = females.count() - abs(MFDiff) 
+            counter = 0
+            for female in females:
+                if counter == nbCouple:
+                    break
+                self.reproduceRabbits(female, rules)
+                counter += 1
+            
                         
         # Maximum number of individuals in a cage
         totalCages = self.nb_cages

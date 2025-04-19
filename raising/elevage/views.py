@@ -81,13 +81,13 @@ def dashboard(request, elevage_id):
                         sold.save()
                         sold.delete()
                         sold.save()
-                        elevage.solde += Rules.object.first().rabbitSalePrice 
+                        elevage.solde += Rules.objects.first().rabbitSalePrice 
                     for sold in soldFemales:
                         sold.etat = 'VENDU'
                         sold.save()
                         sold.delete()
                         sold.save()
-                        elevage.solde += Rules.object.first().rabbitSalePrice 
+                        elevage.solde += Rules.objects.first().rabbitSalePrice 
                     
                     elevage.save()
                     elevage.turnAction(action)
