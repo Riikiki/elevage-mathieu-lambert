@@ -74,7 +74,7 @@ class Elevage(models.Model):
             else:
                 totalConsumption += rules.consumptionFood3Month
         # Update self quantite_nourriture
-        self.quantite_nourriture -= totalConsumption        
+        self.quantite_nourriture = max(0, self.quantite_nourriture - totalConsumption)      
         self.save()
         
         # Reproduction

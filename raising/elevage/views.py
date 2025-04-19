@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action
-from .models import Elevage, Individu
+from .models import Elevage, Individu, Rules
 
 def nouveau(request):
     if request.method == 'POST':
@@ -58,7 +58,7 @@ def dashboard(request, elevage_id):
                 
             else:
                 
-                totalAchat = action['BuyCages'] * 100 + action['BuyFood'] * 10 # Price not definitive
+                totalAchat = action['BuyCages'] * Rules.objects.first().cagePrice + action['BuyFood'] * Rules.objects.first().foodPrice
                 
                 if totalAchat > elevage.solde: # Check if we have enough money to buy
                     
@@ -81,13 +81,13 @@ def dashboard(request, elevage_id):
                         sold.save()
                         sold.delete()
                         sold.save()
-                        elevage.solde += 50 # Price not definitive
+                        elevage.solde += Rules.object.first().rabbitSalePrice 
                     for sold in soldFemales:
                         sold.etat = 'VENDU'
                         sold.save()
                         sold.delete()
                         sold.save()
-                        elevage.solde += 50 # Price not definitive
+                        elevage.solde += Rules.object.first().rabbitSalePrice 
                     
                     elevage.save()
                     elevage.turnAction(action)
