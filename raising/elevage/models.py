@@ -30,14 +30,7 @@ class Elevage(models.Model):
             "Nombre de cages": self.nb_cages,
             "Solde": f"{self.solde} €",
         }
-        
-    
-    
-    
-        
-        
-        
-        
+          
 
 class Individu(models.Model):
     
@@ -61,4 +54,27 @@ class Individu(models.Model):
         
         sold = self.objects.get(etat='VENDU', elevage=self.elevage).delete()
         dead = self.objects.get(etat='MORT', elevage=self.elevage).delete()
+    
+class Rules(models.Model):
+    
+    foodPrice = models.IntegerField(default=10)
+    cagePrice = models.IntegerField(default=100)
+    rabbitSalePrice = models.IntegerField(default=50)
+    
+    #Consumption in grammes per month
+    
+    consumptionNourriture1Month = models.IntegerField(default=0)
+    consumptionNourriture2Month = models.IntegerField(default=100)
+    consumptionNourriture3Month = models.IntegerField(default=250)
+    
+    maxRabys = models.IntegerField(default=4)
+    maxPerCage = models.IntegerField(default=6)
+    
+    minAgeGravide = models.IntegerField(default=6)
+    maxAgeGravide = models.IntegerField(default=48)
+    gestation = models.IntegerField(default=1)
+    
+    def __str__(self):
+        return "Règles de l'élevage"
+    
     
