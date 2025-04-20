@@ -15,9 +15,10 @@ class Rules(models.Model):
     
     maxRabys = models.IntegerField(default=4)
     maxPerCage = models.IntegerField(default=6)
+    maxAge = models.IntegerField(default=25)
     
     minAgeGravide = models.IntegerField(default=6)
-    maxAgeGravide = models.IntegerField(default=48)
+    maxAgeGravide = models.IntegerField(default=24)
     gestation = models.IntegerField(default=1)
     
     def __str__(self):
@@ -75,6 +76,9 @@ class Elevage(models.Model):
         for individu in individus:
             individu.age += 1
             individu.save()
+            if individu.age > rules.maxAge:
+                individu.etat = 'MORT'
+                individu.save()
         
         # Consumption of food
         totalConsumption = 0
