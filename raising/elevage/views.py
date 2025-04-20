@@ -5,6 +5,9 @@ from .models import Elevage, Individu, Rules
 def home(request):
     return render(request, 'elevage/home.html')
 
+def rules(request):
+    return render(request, 'elevage/rules.html')
+
 def gameover(request):
     return render(request, 'elevage/gameover.html')
 
