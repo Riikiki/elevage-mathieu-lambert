@@ -2,6 +2,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action
 from .models import Elevage, Individu, Rules
 
+def gameover(request):
+    return render(request, 'elevage/gameover.html')
+
 def nouveau(request):
     if request.method == 'POST':
         
@@ -92,6 +95,12 @@ def dashboard(request, elevage_id):
                     elevage.save()
                     elevage.turnAction(action)
                     elevage.save()
+                    
+                    # Check if the game is over
+                    if elevage.individus.filter(etat='PRESENT').count() == 0:
+                        elevage.delete()
+                        return redirect('elevage_gameover')
+                    
                     return redirect('elevage_dashboard', elevage_id=elevage.id)
                     
     return render(request, 'elevage/dashboard.html', {'elevage': elevage, 'individus': individus, 'form' : form, 'elevage_fields': elevage.getFieldsAndValues()})

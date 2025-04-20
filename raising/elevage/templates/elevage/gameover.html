@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Game Over</h1>
+<p>Sorry, but you have lost the game.</p>
+
+<a href="{% url 'elevage_nouveau' %}">
+    <button>Start new game</button>
+</a>
+
+{% endblock %}
