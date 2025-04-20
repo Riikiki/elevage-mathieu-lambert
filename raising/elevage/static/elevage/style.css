@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rubik+Bubbles&display=swap');
+
+/* General style */
+
+body {
+  font-family: "Rubik Bubbles", Arial, sans-serif;
+  background-image: url('../elevage/background.jpeg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  padding: 0;
+}
+
+/* Dashboard style */
+
+.container {
+max-width: 1000px;
+margin: 2rem auto;
+padding: 1rem;
+}
+
+.columns {
+display: flex;
+flex-wrap: wrap;
+gap: 2rem;
+}
+
+.column {
+flex: 1;
+min-width: 300px;
+}
+
+.info-box, .form-box {
+background-color: #f8f8f8;
+border: 1px solid #ddd;
+padding: 1rem;
+border-radius: 8px;
+}
+
+.info-list {
+list-style: none;
+padding: 0;
+}
+
+.info-list li {
+display: flex;
+justify-content: space-between;
+padding: 0.5rem 0;
+border-bottom: 1px solid #eee;
+}
+
+h1 .h1-dashboard {
+    font-size: 2.5rem;
+    color: #333;
+    text-align: center;
+    margin-top: 20px;
+}
+
+button {
+display: inline-block;
+font-family: "Rubik Bubbles", Arial, sans-serif;
+padding: 15px 25px;
+font-size: 24px;
+cursor: pointer;
+text-align: center;
+text-decoration: none;
+outline: none;
+color: #fff;
+background-color: #04AA6D;
+border: none;
+border-radius: 15px;
+box-shadow: 0 9px #999;
+}
+
+button:hover {background-color: #3e8e41}
+
+button:active {
+background-color: #3e8e41;
+box-shadow: 0 5px #666;
+transform: translateY(4px);
+}
+  
+.error {
+background-color: #ffe0e0;
+border: 1px solid #ff8888;
+color: #a80000;
+padding: 10px;
+border-radius: 5px;
+margin-top: 1rem;
+}
+  
