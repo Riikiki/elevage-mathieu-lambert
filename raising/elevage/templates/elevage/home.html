@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Raibbing Simulator</h1>
+
+<div>
+    <a href="{% url 'elevage_nouveau' %}">
+        <button>Nouvelle partie</button>
+    </a>
+
+    <a href="{% url 'elevage_liste' %}">
+        <button>Continue</button>
+    </a>
+
+    <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">
+        <button>Donate</button>
+    </a>
+</div>
+
+{% endblock %}
