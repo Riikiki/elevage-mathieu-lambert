@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container">
+    <h1> Règles du jeu </h1>
+
+  <h2>Description de la partie</h2>
+
+    <p>C'est un jeu de stratégie au tour par tour. Votre but est d'avoir le plus grand élevage de lapin. vous disposez d’une quantité limitée 
+        de ressources ce qui vous pousse à réfléchir à la manière optimale de les utiliser.</p>
+   
+    <p>Les ressources que vous aurez à gérer ici sont :</p>
+
+    <ul>
+        <li>nombre de lapins (mâles, femelles, reproduction et vente)</li>
+        <li>quantité de nourriture</li>
+        <li>nombre de cages</li>
+        <li>argent en caisse</li>
+    </ul>
+    
+    <p>À chaque tour vous pourrez choisir d'effectuer des actions de vente de lapins et d'achat de consommables. 
+        Une fois vos actions terminées, vous indiquerez la fin du tour. L'application fera alors avancer le temps 
+        d'un mois et appliquera les règles suivantes :
+    </p>
+
+    <ul>
+        <li>les femelles parviennent à maturité et peuvent se reproduire à l'âge de 6 mois et elles peuvent continuer à mettre bas pendant quatre ans. La gestation dure 1 mois, et l'animal peut mettre bas chaque fois de 1 à 4 lapereaux. Elle peut être de nouveau gravide quelques jours après avoir mis bas.
+            un lapin atteint la taille adulte à 3 mois.</li>
+        <li>l'alimentation :
+            <ul>
+                <li>un adulte consomme 250 g/jour</li>
+                <li> un lapereau consomme du lait maternel pendant le 1er mois (gratuit, fourni pas sa mère), 100 g au cours du 2ème mois, 
+                    250g à partir du troisième mois,</li>
+                <li>si un individu vient à manquer de nourriture pendant un mois il meurt.</li>
+            </ul>
+        </li>
+        <li>les cages :
+            <ul>
+                <li>la taille est prévue pour 6 individus par cage,</li>
+                <li>à partir de 10 individus par cage, la surpopulation favorise l'apparition de maladies qui provoque la mort des individus.</li>
+                <li>les lapereaux sont si petits qu'ils ne comptent pas dans la surpopulation au cours du premier mois de leur vie.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <a href="{% url 'elevage_home' %}">
+        <button>Retour au menu</button>
+    </a>
+</div>
+{% endblock %}
