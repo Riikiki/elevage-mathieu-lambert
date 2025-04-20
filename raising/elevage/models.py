@@ -34,6 +34,11 @@ class Elevage(models.Model):
     quantite_nourriture = models.IntegerField(default=0)
     nb_cages = models.IntegerField(default=0)
     solde = models.IntegerField(default=0)
+    
+    # Stats
+    nbTurn = models.IntegerField(default=0)
+    nbSoldRabbits = models.IntegerField(default=0)
+    moneyMade = models.IntegerField(default=0)
 
     def __str__(self):
         return self.nom

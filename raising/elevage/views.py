@@ -78,6 +78,7 @@ def dashboard(request, elevage_id):
                     # Updating individus
                     soldMales = individus.filter(sexe='M', etat='PRESENT')[:action['SellMales']]
                     soldFemales = individus.filter(sexe='F', etat='PRESENT')[:action['SellFemales']]
+                    nbSold = 0
                     
                     for sold in soldMales:
                         sold.etat = 'VENDU'
@@ -85,15 +86,24 @@ def dashboard(request, elevage_id):
                         sold.delete()
                         sold.save()
                         elevage.solde += Rules.objects.first().rabbitSalePrice 
+                        nbSold += 1
+                        
                     for sold in soldFemales:
                         sold.etat = 'VENDU'
                         sold.save()
                         sold.delete()
                         sold.save()
                         elevage.solde += Rules.objects.first().rabbitSalePrice 
+                        nbSold += 1
                     
+                    elevage.nbSoldRabbits += nbSold
+                    elevage.moneyMade += nbSold * Rules.objects.first().rabbitSalePrice
                     elevage.save()
+                    
                     elevage.turnAction(action)
+                    elevage.save()
+                    
+                    elevage.nbTurn += 1
                     elevage.save()
                     
                     # Check if the game is over
