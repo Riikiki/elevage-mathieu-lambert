@@ -29,16 +29,16 @@ class Elevage(models.Model):
     nom = models.CharField(max_length=100, default='Partie sans nom')
     
     # Ressources
-    nb_males = models.IntegerField(default=0)
-    nb_femelles = models.IntegerField(default=0)
-    quantite_nourriture = models.IntegerField(default=0)
-    nb_cages = models.IntegerField(default=0)
+    nb_males = models.PositiveBigIntegerField(default=1)
+    nb_femelles = models.PositiveBigIntegerField(default=1)
+    quantite_nourriture = models.PositiveBigIntegerField(default=0)
+    nb_cages = models.PositiveBigIntegerField(default=0)
     solde = models.IntegerField(default=0)
     
     # Stats
-    nbTurn = models.IntegerField(default=0)
-    nbSoldRabbits = models.IntegerField(default=0)
-    moneyMade = models.IntegerField(default=0)
+    nbTurn = models.PositiveBigIntegerField(default=0)
+    nbSoldRabbits = models.PositiveBigIntegerField(default=0)
+    moneyMade = models.BigIntegerField(default=0)
 
     def __str__(self):
         return self.nom
@@ -78,12 +78,26 @@ class Elevage(models.Model):
         individus = Individu.objects.filter(etat='PRESENT')
         
         # Age of the individuals
+        #for database safety, I mark the individuals that should die and delete themn later out of the loop
+        # I don't want to delete them in the loop because it can cause problems with the database (data base is locked)
+        deads = []
+        
         for individu in individus:
             individu.age += 1
-            individu.save()
             if individu.age > rules.maxAge:
                 individu.etat = 'MORT'
-                individu.save()
+                deads.append(individu.id)
+                
+        # Saving first ages using batch update        
+        Individu.objects.bulk_update(individus, ['age'])
+        
+        if deads:
+            # Delete the dead individuals
+            Individu.objects.filter(id__in=deads).update(etat='MORT')
+        
+        # Refresh the list of individuals
+        individus = Individu.objects.filter(etat='PRESENT')
+        
         
         # Consumption of food
         totalConsumption = 0
@@ -103,9 +117,12 @@ class Elevage(models.Model):
         if totalConsumption <= self.quantite_nourriture:
             self.quantite_nourriture -= totalConsumption
         else:
+            
             #sort the individuals by age and remove the oldest ones first
             sortedIndividuals = sorted(consumptionPerIndividuals, key=lambda x: x[0].age, reverse=True) #reverse=true to sort by age descending
             remainingFood = self.quantite_nourriture
+            #Same idea as before, for database safety, I mark the individuals that should die and delete them later out of the loop
+            deathsDueToFood = []
             
             for individu, consumption in sortedIndividuals:
                 
@@ -113,14 +130,14 @@ class Elevage(models.Model):
                     
                     remainingFood -= consumption
                     self.quantite_nourriture = remainingFood
-                    individu.save()
                     
                 else:
                     
-                    individu.etat = 'MORT'
-                    individu.save()  
+                    deathsDueToFood.append(individu.id)
                         
-        self.save()
+            if deathsDueToFood:
+                # Delete the individuals that died due to food
+                Individu.objects.filter(id__in=deathsDueToFood).update(etat='MORT')
         
         # Reproduction
         females = self.individus.filter(sexe='F', etat='PRESENT')
@@ -149,11 +166,10 @@ class Elevage(models.Model):
         totalIndividus = self.individus.filter(etat='PRESENT', age__gt=1).count()
         if totalIndividus > totalCages * rules.maxPerCage:
             # Remove the excess individuals
-            for i in range(totalIndividus - (totalCages * rules.maxPerCage)):
-                #the older one dies
-                individu =  self.individus.filter(etat='PRESENT').order_by('-age').first()
-                individu.etat = 'MORT'
-                individu.save()
+            excess = totalIndividus - totalCages * rules.maxPerCage
+            toKill = self.individus.filter(etat='PRESENT').order_by('-age')[:excess]
+            idToKill = [individu.id for individu in toKill]
+            Individu.objects.filter(id__in=idToKill).update(etat='MORT')
         
         self.save()
           
