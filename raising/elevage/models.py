@@ -192,10 +192,6 @@ class Individu(models.Model):
             "État": self.etat,
         }
     
-    # def deleteSoldOrDead(self):
-        
-    #     sold = self.objects.get(etat='VENDU', elevage=self.elevage).delete()
-    #     dead = self.objects.get(etat='MORT', elevage=self.elevage).delete()
         
        
 
