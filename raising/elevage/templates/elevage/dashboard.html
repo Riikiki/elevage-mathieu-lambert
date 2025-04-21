@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container">
     
-    <h1 class="h1-dashboard">Détails de l'élevage "{{ elevage.nom }}"</h1>
+    <h1 class="h1-dashboard">{{ elevage.nom }}</h1>
 
     <div class="columns">
       <div class="info-box">
@@ -16,22 +16,41 @@
           {% endfor %}
         </ul>
       
-        <h2>Individus :</h2>
-        <ul>
-          <p>Nombre d'individus trouvés : {{ individus|length }}</p>
+        <h2>Individus</h2>
 
-          {% for individu in individus %}
-            <li>
-              {{ individu.sexe }} — {{ individu.age }} mois 
-            </li>
-          {% empty %}
-            <li>Aucun individu enregistré pour cet élevage.</li>
-          {% endfor %}
-        </ul>
+        <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
+        <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
+
+        <div id="popupMales" class="popup">
+          <div class="popup-content">
+            <span class="close" onclick="closePopup('popupMales')"> X </span>
+            <h3>Mâles</h3>
+            <ul>
+              {% for male in individus_males %}
+                <li>Age : {{ male.age }} mois</li>
+              {% empty %}
+                <li>Aucun mâle trouvé.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div id="popupFemales" class="popup">
+          <div class="popup-content">
+            <span class="close" onclick="closePopup('popupFemales')"> X </span>
+            <h3>Femelles</h3>
+            <ul>
+              {% for female in individus_femelles %}
+                <li>Age : {{ female.age }} mois</li>
+              {% empty %}
+                <li>Aucun femelle trouvée.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
       </div>
 
       <div class="form-box">
-        <h2>Ajouter un individu :</h2>
         <h2>Actions du tour</h2>
         <form method="post">
           {% csrf_token %}
@@ -40,18 +59,18 @@
         </form>
       </div>
 
-    {% if form.errors %}
-      <ul class="errorlist">
-        {% for field in form %}
-          {% for error in field.errors %}
+      {% if form.errors %}
+        <ul class="errorlist">
+          {% for field in form %}
+            {% for error in field.errors %}
+              <li>{{ error }}</li>
+            {% endfor %}
+          {% endfor %}
+          {% for error in form.non_field_errors %}
             <li>{{ error }}</li>
           {% endfor %}
-        {% endfor %}
-        {% for error in form.non_field_errors %}
-          <li>{{ error }}</li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+        </ul>
+      {% endif %}
     </div>
 
     <a href="{% url 'elevage_liste' %}">Retour à la liste</a>

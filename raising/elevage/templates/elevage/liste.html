@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-    <h1>Liste des élevages</h1>
-    <ul>
-        {% for elevage in elevages %}
-            <li>
-                <a href="{% url 'elevage_dashboard' elevage.id %}">
-                    {{ elevage.nom }}
-                </a>
-            </li>
-        {% endfor %}
-    </ul>
-    <a href="{% url 'elevage_nouveau' %}">Créer un nouvel élevage</a>
-    <a href="{% url 'elevage_home' %}">Retour au menu</a>
-
+    <div class="list-container">
+        <h1>Liste des élevages</h1>
+        <ul>
+            {% for elevage in elevages %}
+                <li>
+                    <a href="{% url 'elevage_dashboard' elevage.id %}">
+                        {{ elevage.nom }}
+                    </a>
+                </li>
+            {% endfor %}
+            </ul>
+    </div>
+    <div class="list-buttons">   
+        <a href="{% url 'elevage_nouveau' %}"><button>Créer un nouvel élevage</button></a>
+        <a href="{% url 'elevage_home' %}"><button>Retour au menu</button></a>
+    </div>
+    
 {% endblock content %}

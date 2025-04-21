@@ -1,7 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Rubik+Bubbles&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Henny+Penny&display=swap');
 
-/* General style */
+/* ----------------------------------GENERAL STYLE---------------------------------- */
 
 body {
   font-family: "Rubik Bubbles", Arial, sans-serif;
@@ -41,7 +42,22 @@ button:active {
     transform: translateY(4px);
 }
 
-/* Meny Style */
+input[type=number]{
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+}
+
+a {
+    color: black;
+    font-size: 1.5rem;
+    font-family: "Rubik Bubbles", Arial, sans-serif;
+}
+
+/* ----------------------------------MENU STYLE---------------------------------- */
 
 .menu-container {
   display: flex;
@@ -78,7 +94,7 @@ width: 100%;
 
 }
 
-/* Dashboard style */
+/* ----------------------------------DASHBOARD STYLE---------------------------------- */
 
 .container {
 max-width: 1000px;
@@ -117,10 +133,10 @@ border-bottom: 1px solid #eee;
 }
 
 h1 .h1-dashboard {
-    font-size: 2.5rem;
-    color: #333;
-    text-align: center;
-    margin-top: 20px;
+  font-size: 2.5rem;
+  color: #333;
+  text-align: center;
+  margin-top: 20px;
 }
   
 .error {
@@ -130,4 +146,73 @@ color: #a80000;
 padding: 10px;
 border-radius: 5px;
 margin-top: 1rem;
+}
+
+.popup {
+  font-family: "Henny Penny", Arial, sans-serif;
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(255, 216, 216, 0.4);
+}
+
+.popup-content {
+  background-color: rgb(233, 216, 216);
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.close {
+  color: rgb(23, 23, 23);
+  font-size: 28px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+}
+
+/* ----------------------------------GAMEOVER STYLE---------------------------------- */
+
+.go-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: rgb(227, 0, 0);
+}
+
+.go-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; 
+  margin-top: 1rem; 
+}
+
+/* ----------------------------------LISTE STYLE---------------------------------- */
+
+.list-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  color: rgb(184, 0, 0);
+}
+
+.list-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem; 
+  margin-top: 1rem; 
 }

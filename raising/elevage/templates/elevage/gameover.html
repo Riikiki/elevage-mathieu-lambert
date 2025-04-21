@@ -2,17 +2,20 @@
 
 {% block content %}
 
-<h1>Game Over</h1>
-<p>Sorry, but you have lost the game.</p>
-
-<ul>
-    <li><strong>Turns survived:</strong> {{ turns }}</li>
-    <li><strong>Rabbits sold:</strong> {{ sold }}</li>
-    <li><strong>Money earned:</strong> {{ money }} €</li>
-  </ul>
+<div class="go-container">
+  <h1>Game Over</h1>
+  <p>Sorry, but you have lost the game.</p>
   
-<a href="{% url 'elevage_nouveau' %}">
-    <button>Start new game</button>
-</a>
+  <div class=go-buttons>
+    <a href="{% url 'elevage_nouveau' %}">
+        <button>Start new game</button>
+    </a>
+
+    <a href="{% url 'elevage_home' %}">
+      <button>Menu</button>
+    </a>
+  </div>
+  
+</div>
 
 {% endblock %}

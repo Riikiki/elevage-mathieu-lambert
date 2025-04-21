@@ -49,6 +49,8 @@ def dashboard(request, elevage_id):
     
     elevage = get_object_or_404(Elevage, id=elevage_id)
     individus = elevage.individus.filter(etat='PRESENT')
+    individus_males = individus.filter(sexe='M')
+    individus_femelles = individus.filter(sexe='F')
     form = Action()
     
     if request.method == 'POST':
@@ -119,7 +121,13 @@ def dashboard(request, elevage_id):
                     
                     return redirect('elevage_dashboard', elevage_id=elevage.id)
                     
-    return render(request, 'elevage/dashboard.html', {'elevage': elevage, 'individus': individus, 'form' : form, 'elevage_fields': elevage.getFieldsAndValues()})
+    return render(request, 'elevage/dashboard.html', {
+        'elevage': elevage, 
+        'individus': individus, 
+        'individus_males': individus_males, 
+        'individus_femelles': individus_femelles,
+        'form' : form, 
+        'elevage_fields': elevage.getFieldsAndValues()})
 
 def liste(request):
     elevages = Elevage.objects.all()
