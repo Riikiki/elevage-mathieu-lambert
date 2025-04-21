@@ -3,15 +3,15 @@ from django.db import models
 
 class Rules(models.Model):
     
-    foodPrice = models.IntegerField(default=10)
+    foodPrice = models.IntegerField(default=10) #10€ per kg
     cagePrice = models.IntegerField(default=100)
     rabbitSalePrice = models.IntegerField(default=50)
     
-    #Consumption in grammes per month
+    #Consumption in kilogrammes per month
     
-    consumptionFood1Month = models.IntegerField(default=0)
-    consumptionFood2Month = models.IntegerField(default=100)
-    consumptionFood3Month = models.IntegerField(default=250)
+    consumptionFood1Month = models.FloatField(default=0)
+    consumptionFood2Month = models.FloatField(default=0.100)
+    consumptionFood3Month = models.FloatField(default=0.250)
     
     maxRabys = models.IntegerField(default=4)
     maxPerCage = models.IntegerField(default=6)
@@ -31,8 +31,8 @@ class Elevage(models.Model):
     # Ressources
     nb_males = models.PositiveBigIntegerField(default=1)
     nb_femelles = models.PositiveBigIntegerField(default=1)
-    quantite_nourriture = models.PositiveBigIntegerField(default=0)
-    nb_cages = models.PositiveBigIntegerField(default=0)
+    quantite_nourriture = models.FloatField(default=0)
+    nb_cages = models.PositiveBigIntegerField(default=1)
     solde = models.IntegerField(default=0)
     
     # Stats
