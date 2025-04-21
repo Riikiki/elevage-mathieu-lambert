@@ -63,8 +63,8 @@ class Elevage(models.Model):
     def reproduceRabbits(self, female, rules):
         
         if female.age >= rules.minAgeGravide and female.age <= rules.maxAgeGravide:
-            if randint(0, 1) == 1:
-                nbRabys = randint(1, rules.maxRabys)
+            if randint(0, 1) == 1: #50% chance of being pregnant
+                nbRabys = randint(1, rules.maxRabys) #Random number of babies between 1 and maxRabys
                 for i in range(nbRabys):
                     sexe = choice(['M', 'F'])
                     age = 0
