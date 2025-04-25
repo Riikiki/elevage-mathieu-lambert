@@ -1,5 +1,6 @@
 from random import randint, choice
 from django.db import models
+from django.contrib.auth.models import User
 
 class Rules(models.Model):
     
@@ -26,6 +27,7 @@ class Rules(models.Model):
 
 class Elevage(models.Model):
     
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name="elevages")
     nom = models.CharField(max_length=100, default='Partie sans nom')
     
     # Ressources

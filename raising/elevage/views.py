@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ElevageForm, Action
+from .forms import ElevageForm, Action, InscriptionForm
 from .models import Elevage, Individu, Rules
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
     return render(request, 'elevage/home.html')
 
@@ -11,6 +14,7 @@ def rules(request):
 def gameover(request):
     return render(request, 'elevage/gameover.html')
 
+@login_required
 def nouveau(request):
     if request.method == 'POST':
         
@@ -45,6 +49,7 @@ def nouveau(request):
 
     return render(request, 'elevage/new.html', {'form': form})
 
+@login_required
 def dashboard(request, elevage_id):
     
     elevage = get_object_or_404(Elevage, id=elevage_id)
@@ -129,6 +134,24 @@ def dashboard(request, elevage_id):
         'form' : form, 
         'elevage_fields': elevage.getFieldsAndValues()})
 
+@login_required
 def liste(request):
-    elevages = Elevage.objects.all()
+    elevages = Elevage.objects.filter(utilisateur=request.user)
     return render(request, 'elevage/liste.html', {'elevages': elevages})
+
+def login(request):
+    return render(request, 'elevage/login.html')
+
+def logout_view(request):
+    logout(request)
+
+def inscription(request):
+    if request.method == "POST":
+        form = InscriptionForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)  # Connexion automatique après inscription
+            return redirect('liste')
+    else:
+        form = InscriptionForm()
+    return render(request, 'elevage/inscription.html', {'form': form})
