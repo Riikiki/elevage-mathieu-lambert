@@ -216,3 +216,75 @@ margin-top: 1rem;
   gap: 1rem; 
   margin-top: 1rem; 
 }
+
+/* ---------------------------------CHAT BOT STYLE---------------------------------- */
+.chatbot-popup {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  height: 400px; 
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+  font-family: Arial, sans-serif;
+  display: flex; 
+}
+
+.chatbot-header {
+  background: #4CAF50;
+  color: white;
+  padding: 20px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatbot-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+.chatbot-body p {
+  margin: 8px 0;
+  font-size: 14px;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.chatbot-footer {
+  display: flex;
+  padding: 10px;
+  background: #eee;
+}
+
+.chatbot-footer input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
+
+.chatbot-footer button {
+  margin-left: 8px;
+  padding: 8px 12px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.chatbot-footer button:hover {
+  background: #45a049;
+}

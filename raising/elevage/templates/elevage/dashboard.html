@@ -74,5 +74,29 @@
     </div>
 
     <a href="{% url 'elevage_liste' %}">Retour à la liste</a>
-  </div> 
+  </div>
+
+  <a onclick="openPopup('chatbotPopup')" 
+     style="position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-size: 18px; cursor: pointer;">
+    Assistance
+  </a>
+
+
+  <div id="chatbotPopup" class="chatbot-popup">
+    <div class="chatbot-header">
+      <span>Fred, expert lapin</span>
+      <span class="close" onclick="closePopup('chatbotPopup')" style="font-size : 30px; color : white"> x </span>
+    </div>
+    <div class="chatbot-body">
+      <p><strong>Fred :</strong> Salut ! Je suis ton assistant éleveur. Je peux t'aider à
+        prédire les prochaines naissances, à gérer tes animaux et à répondre à tes questions sur l'élevage.
+        N'hésite pas à me poser des questions !</p>
+      </p>
+    </div>
+    <div class="chatbot-footer">
+      <input type="text" id="chatbotInput" placeholder="Écivez votre message..." />
+      <button onclick="sendMessage('Needtobereplacedbyusername')" style="font-size: 15px">Envoyer</button>
+    </div>
+  </div>
+
 {% endblock %}
