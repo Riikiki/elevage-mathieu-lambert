@@ -1,5 +1,7 @@
 from random import randint, choice
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 class Rules(models.Model):
     
@@ -218,6 +220,11 @@ class Sante(models.Model):
 
     def __str__(self):
         return f"{self.individu} - {self.get_etat_display()}"
+
+@receiver(post_save, sender=Individu)
+def create_sante_for_individu(sender, instance, created, **kwargs):
+    if created and not hasattr(instance, 'sante'):
+        Sante.objects.create(individu=instance, etat='SANTE')
 
 
 
