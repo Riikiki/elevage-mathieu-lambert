@@ -24,7 +24,7 @@ class Rules(models.Model):
     gestation = models.IntegerField(default=1)
     
     maxPossiblePerCage = models.IntegerField(default=10)
-    
+    probMortContamine = models.FloatField(default=0.2)
     
     def __str__(self):
         return "Règles de l'élevage"
@@ -186,6 +186,15 @@ class Elevage(models.Model):
                         if randint(0, 100) < int(prob * 100):
                             individu.sante.etat = 'CONTAMINE'
                             individu.sante.save()
+        
+        for individu in self.individus.filter(etat='PRESENT', age__gt=1):
+            if individu.sante.etat == 'CONTAMINE':
+                if randint(0, 100) < int(rules.probMortContamine * 100):
+                    individu.etat = 'MORT'
+                    individu.sante.etat = 'MORT'
+                    individu.save()
+                    individu.sante.save()
+                    
         self.save()
           
 
