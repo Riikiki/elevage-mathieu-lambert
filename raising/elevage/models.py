@@ -223,8 +223,8 @@ class Sante(models.Model):
 
 @receiver(post_save, sender=Individu)
 def create_sante_for_individu(sender, instance, created, **kwargs):
-    if created and not hasattr(instance, 'sante'):
-        Sante.objects.create(individu=instance, etat='SANTE')
+    if created:
+        Sante.objects.get_or_create(individu=instance, defaults={'etat': 'SANTE'})
 
 
 

@@ -27,7 +27,10 @@
             <h3>Mâles</h3>
             <ul>
               {% for male in individus_males %}
-                <li>Age : {{ male.age }} mois</li>
+                <li>
+                  Age : {{ male.age }} mois —
+                  Santé : {% if male.sante %}{{ male.sante.get_etat_display }}{% else %}Non défini{% endif %}
+                </li>
               {% empty %}
                 <li>Aucun mâle trouvé.</li>
               {% endfor %}
@@ -41,7 +44,10 @@
             <h3>Femelles</h3>
             <ul>
               {% for female in individus_femelles %}
-                <li>Age : {{ female.age }} mois</li>
+                <li>
+                  Age : {{ female.age }} mois —
+                  Santé : {% if female.sante %}{{ female.sante.get_etat_display }}{% else %}Non défini{% endif %}
+                </li>
               {% empty %}
                 <li>Aucun femelle trouvée.</li>
               {% endfor %}
