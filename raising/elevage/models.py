@@ -192,6 +192,19 @@ class Individu(models.Model):
             "État": self.etat,
         }
     
+    
+class Sante(models.Model):
+    SANTE_CHOICES = [
+        ('SANTE', 'En santé'),
+        ('GUERISON', 'Guérison'),
+        ('CONTAMINE', 'Contamination'),
+        ('MORT', 'Mort'),
+    ]
+    etat = models.CharField(max_length=15, choices=SANTE_CHOICES, default='SANTE')
+    individu = models.OneToOneField('Individu', on_delete=models.CASCADE, related_name='sante')
+
+    def __str__(self):
+        return f"{self.individu} - {self.get_etat_display()}"
         
        
 
