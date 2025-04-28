@@ -21,6 +21,9 @@ class Rules(models.Model):
     maxAgeGravide = models.IntegerField(default=24)
     gestation = models.IntegerField(default=1)
     
+    maxPossiblePerCage = models.IntegerField(default=10)
+    
+    
     def __str__(self):
         return "Règles de l'élevage"
 
@@ -164,13 +167,23 @@ class Elevage(models.Model):
         # Maximum number of individuals in a cage
         totalCages = self.nb_cages
         totalIndividus = self.individus.filter(etat='PRESENT', age__gt=1).count()
-        if totalIndividus > totalCages * rules.maxPerCage:
-            # Remove the excess individuals
-            excess = totalIndividus - totalCages * rules.maxPerCage
-            toKill = self.individus.filter(etat='PRESENT').order_by('-age')[:excess]
-            idToKill = [individu.id for individu in toKill]
-            Individu.objects.filter(id__in=idToKill).update(etat='MORT')
-        
+        maxPerCage = rules.maxPerCage
+        maxPossiblePerCage = rules.maxPossiblePerCage
+
+        if totalIndividus > totalCages * maxPerCage:
+
+            # Probabilité de contamination linéaire générale
+            nb_in_cage_moy = totalIndividus / totalCages
+            if nb_in_cage_moy > maxPerCage:
+                if nb_in_cage_moy >= maxPossiblePerCage:
+                    prob = 1.0
+                else:
+                    prob = (nb_in_cage_moy - maxPerCage) / (maxPossiblePerCage - maxPerCage)
+                for individu in self.individus.filter(etat='PRESENT', age__gt=1):
+                    if individu.sante.etat == 'SANTE':
+                        if randint(0, 100) < int(prob * 100):
+                            individu.sante.etat = 'CONTAMINE'
+                            individu.sante.save()
         self.save()
           
 
@@ -205,8 +218,7 @@ class Sante(models.Model):
 
     def __str__(self):
         return f"{self.individu} - {self.get_etat_display()}"
-        
-       
 
-    
-    
+
+
+
