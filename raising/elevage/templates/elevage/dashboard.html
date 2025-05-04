@@ -12,7 +12,16 @@
           {% comment %} Trying to update along the changes but it doesn't work i want to throw myself out of the window {% endcomment %}
           {% comment %} Nevermind I found it {% endcomment %}
           {% for field, value in elevage.getFieldsAndValues.items%}
-            <li><strong>{{ field }}:</strong> {{ value }}</li>
+            {% if field == 'solde' %}
+              <li><strong>{{ field }} (en €):</strong> {{ value }}</li>
+            {% elif field == 'quantite_nourriture' %}
+              <li><strong>{{ field }}:</strong> {{ value }} kg</li>
+            {% elif field == 'males' or field == 'femelles' %}
+            
+            {% else %}
+              <li><strong>{{ field }}:</strong> {{ value }}</li>
+            {% endif %}
+            
           {% endfor %}
         </ul>
       
@@ -90,12 +99,16 @@
     <div class="chatbot-body">
       <p><strong>Fred :</strong> Salut ! Je suis ton assistant éleveur. Je peux t'aider à
         prédire les prochaines naissances, à gérer tes animaux et à répondre à tes questions sur l'élevage.
-        N'hésite pas à me poser des questions !</p>
+        N'hésite pas à me poser des questions ! Je peux t'aider à :
+        <ul style="font-size: 14px">
+          <li>Prédire le prochain tour,</li>
+          <li>À te donner des conseils,</li>
+          <li>Savoir combien de bébé lapins tu auras au prochain tour.</li>
       </p>
     </div>
     <div class="chatbot-footer">
-      <input type="text" id="chatbotInput" placeholder="Écivez votre message..." />
-      <button onclick="sendMessage('Needtobereplacedbyusername')" style="font-size: 15px">Envoyer</button>
+      <input type="text" id="chatbotInput" placeholder="Écrivez votre message..." />
+      <button onclick="sendMessage('Needtobereplacedbyusername', {{ elevage_id }})" style="font-size: 15px">Envoyer</button>
     </div>
   </div>
 

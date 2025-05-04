@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action
 from .models import Elevage, Individu, Rules
+from django.core import serializers
 
 def home(request):
     return render(request, 'elevage/home.html')
@@ -49,8 +50,14 @@ def dashboard(request, elevage_id):
     
     elevage = get_object_or_404(Elevage, id=elevage_id)
     individus = elevage.individus.filter(etat='PRESENT')
-    individus_males = individus.filter(sexe='M')
+    individus_males = individus.filter(sexe='M', etat='PRESENT')
     individus_femelles = individus.filter(sexe='F')
+    # actualData = serializers.serialize('json', Elevage.objects.filter(pk=elevage_id))
+    actualData = {
+        'model' : 'elevage.Elevage',
+        'pk' : elevage.pk,
+        'fields' : elevage.getFieldsAndValues()
+    }
     form = Action()
     
     if request.method == 'POST':
@@ -127,6 +134,7 @@ def dashboard(request, elevage_id):
         'individus_males': individus_males, 
         'individus_femelles': individus_femelles,
         'form' : form, 
+        'actualData': actualData,
         'elevage_fields': elevage.getFieldsAndValues()})
 
 def liste(request):
