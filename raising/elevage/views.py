@@ -47,7 +47,6 @@ def nouveau(request):
     return render(request, 'elevage/new.html', {'form': form})
 
 def dashboard(request, elevage_id):
-    
     elevage = get_object_or_404(Elevage, id=elevage_id)
     individus = elevage.individus.filter(etat='PRESENT')
     individus_males = individus.filter(sexe='M', etat='PRESENT')
@@ -60,37 +59,42 @@ def dashboard(request, elevage_id):
     }
     form = Action()
     
+    # Filtra gli individui in base allo stato di salute
+    individus_malades = individus.filter(sante__etat='CONTAMINE')  # Contaminati
+    individus_en_guerison = individus.filter(sante__etat='GUERISON')  # In guarigione
+    individus_morts = elevage.individus.filter(sante__etat='MORT')  # Morti
+    # actualData = serializers.serialize('json', individus, fields=('id', 'sexe', 'age', 'etat', 'sante'))
+    actualData = {
+        'model': 'elevage.Elevage',
+        'pk' : elevage.pk,
+        'fields' :elevage.getFieldsAndValues()
+
+    }
+
+    form = Action()
+    message = None
+
     if request.method == 'POST':
-        
         form = Action(request.POST)
-        
         if form.is_valid():
-            
             action = form.cleaned_data
             nbMales = individus.filter(sexe='M', etat='PRESENT').count()
             nbFemales = individus.filter(sexe='F', etat='PRESENT').count()
             
-            if action['SellMales'] > nbMales or action['SellFemales'] > nbFemales: # Check if we have enough rabbits to sell
-                
+            if action['SellMales'] > nbMales or action['SellFemales'] > nbFemales:  # Controlla se ci sono abbastanza lapini da vendere
                 form.add_error(None, "Pas assez de lapins disponibles.")
-                
             else:
-                
                 totalAchat = action['BuyCages'] * Rules.objects.first().cagePrice + action['BuyFood'] * Rules.objects.first().foodPrice
-                
-                if totalAchat > elevage.solde: # Check if we have enough money to buy
-                    
+                if totalAchat > elevage.solde:  # Controlla se c'è abbastanza denaro
                     form.add_error(None, "Pas assez d'argent.")
-                    
                 else:
-                    
-                    # Saving new values
+                    # Aggiorna i valori
                     elevage.solde -= totalAchat
                     elevage.nb_cages += action['BuyCages']
                     elevage.quantite_nourriture -= action['BuyFood']
                     elevage.save()
                     
-                    # Updating individus
+                    # Aggiorna gli individui
                     soldMales = individus.filter(sexe='M', etat='PRESENT')[:action['SellMales']]
                     soldFemales = individus.filter(sexe='F', etat='PRESENT')[:action['SellFemales']]
                     nbSold = 0
@@ -98,17 +102,13 @@ def dashboard(request, elevage_id):
                     for sold in soldMales:
                         sold.etat = 'VENDU'
                         sold.save()
-                        sold.delete()
-                        sold.save()
-                        elevage.solde += Rules.objects.first().rabbitSalePrice 
+                        elevage.solde += Rules.objects.first().rabbitSalePrice
                         nbSold += 1
                         
                     for sold in soldFemales:
                         sold.etat = 'VENDU'
                         sold.save()
-                        sold.delete()
-                        sold.save()
-                        elevage.solde += Rules.objects.first().rabbitSalePrice 
+                        elevage.solde += Rules.objects.first().rabbitSalePrice
                         nbSold += 1
                     
                     elevage.nbSoldRabbits += nbSold
@@ -121,21 +121,35 @@ def dashboard(request, elevage_id):
                     elevage.nbTurn += 1
                     elevage.save()
                     
-                    # Check if the game is over
-                    if elevage.individus.filter(etat='PRESENT').count() == 0:
-                        elevage.delete()
-                        return redirect('elevage_gameover')
+            elevage.contaminate_if_any_sick()
                     
-                    return redirect('elevage_dashboard', elevage_id=elevage.id)
+            # Gestisci l'acquisto di medicine tramite il modello
+            if action['BuyMedicine'] > 0:
+                success, message = elevage.buy_medicine_and_heal(action['BuyMedicine'])
+                if not success:
+                    form.add_error(None, message)
+
+            # Controlla se il gioco è finito
+            if elevage.individus.filter(etat='PRESENT').count() == 0:
+                elevage.delete()
+                return redirect('elevage_gameover')
+
+            return redirect('elevage_dashboard', elevage_id=elevage.id)
+                    
                     
     return render(request, 'elevage/dashboard.html', {
         'elevage': elevage, 
         'individus': individus, 
         'individus_males': individus_males, 
         'individus_femelles': individus_femelles,
-        'form' : form, 
+        'individus_malades': individus_malades,
+        'individus_en_guerison': individus_en_guerison,
+        'individus_morts': individus_morts,
+        'form': form, 
+        'message': message,  # Passa il messaggio al template
+        'elevage_fields': elevage.getFieldsAndValues(),
         'actualData': actualData,
-        'elevage_fields': elevage.getFieldsAndValues()})
+    })
 
 def liste(request):
     elevages = Elevage.objects.all()

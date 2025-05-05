@@ -30,13 +30,25 @@
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
         <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
 
+        <div class="health-stats">
+          <h3>Statistiques de santé</h3>
+          <ul>
+            <li>Malades : {{ individus_malades|length }}</li>
+            <li>En guérison : {{ individus_en_guerison|length }}</li>
+            <li>Morts : {{ individus_morts|length }}</li>
+          </ul>
+        </div>
+
         <div id="popupMales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupMales')"> X </span>
             <h3>Mâles</h3>
             <ul>
               {% for male in individus_males %}
-                <li>Age : {{ male.age }} mois</li>
+                <li>
+                  Age : {{ male.age }} mois —
+                  Santé : {% if male.sante %}{{ male.sante.get_etat_display }}{% else %}Non défini{% endif %}
+                </li>
               {% empty %}
                 <li>Aucun mâle trouvé.</li>
               {% endfor %}
@@ -50,7 +62,10 @@
             <h3>Femelles</h3>
             <ul>
               {% for female in individus_femelles %}
-                <li>Age : {{ female.age }} mois</li>
+                <li>
+                  Age : {{ female.age }} mois —
+                  Santé : {% if female.sante %}{{ female.sante.get_etat_display }}{% else %}Non défini{% endif %}
+                </li>
               {% empty %}
                 <li>Aucun femelle trouvée.</li>
               {% endfor %}
@@ -66,6 +81,9 @@
           {{ form.as_p }}
           <button type="submit">Valider le tour</button>
         </form>
+        {% if message %}
+          <p class="message">{{ message }}</p>
+        {% endif %}
       </div>
 
       {% if form.errors %}
