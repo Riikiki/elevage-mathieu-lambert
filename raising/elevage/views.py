@@ -106,6 +106,7 @@ def dashboard(request, elevage_id):
                     elevage.nbTurn += 1
                     elevage.save()
                     
+            elevage.contaminate_if_any_sick()
                     
             # Gestisci l'acquisto di medicine tramite il modello
             if action['BuyMedicine'] > 0:

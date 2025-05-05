@@ -28,6 +28,8 @@ class Rules(models.Model):
     probMortContamine = models.FloatField(default=0.2)
     probGuerison = models.FloatField(default=0.5)
     
+    probContaminaison = models.FloatField(default=0.1)
+    
     def __str__(self):
         return "Règles de l'élevage"
 
@@ -225,6 +227,17 @@ class Elevage(models.Model):
                 healed_count += 1
 
         return True, f"{healed_count} lapins guéris."
+
+    def contaminate_if_any_sick(self):
+        rules = Rules.objects.first()
+        # Controlla se c'è almeno un coniglio malato (CONTAMINE e PRESENT)
+        if self.individus.filter(sante__etat='CONTAMINE', etat='PRESENT').exists():
+            prob = rules.probContaminaison
+            # Per ogni coniglio sano (SANTE e PRESENT)
+            for individu in self.individus.filter(sante__etat='SANTE', etat='PRESENT'):
+                if randint(1, 100) <= prob * 100:
+                    individu.sante.etat = 'CONTAMINE'
+                    individu.sante.save()
 
 class Individu(models.Model):
     
