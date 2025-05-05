@@ -244,13 +244,7 @@ class Elevage(models.Model):
                     individu.sante.save()
 
     def heal_guérison(self):
-        """
-        Trasforma tutti i lapini in stato 'GUERISON' in 'SANTE'.
-        """
-        individus_en_guerison = self.individus.filter(sante__etat='GUERISON', etat='PRESENT')
-        for individu in individus_en_guerison:
-            individu.sante.etat = 'SANTE'
-            individu.sante.save()
+        Sante.objects.filter(individu__in=self.individus.filter(sante__etat='GUERISON', etat='PRESENT')).update(etat='SANTE')
 
 class Individu(models.Model):
     
