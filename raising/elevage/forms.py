@@ -24,6 +24,7 @@ class Action(forms.Form):
     SellFemales = forms.IntegerField(min_value=0, required=False, label="Vendre un lapin femelle")
     BuyCages = forms.IntegerField(min_value=0, required=False, label="Acheter des cages")
     BuyFood = forms.IntegerField(min_value=0, required=False, label="Acheter de la nourriture")
+    BuyMedicine = forms.IntegerField(min_value=0, required=False, label="Acheter des médicaments")  
     
     ## Custom clean method to ensure that "no answer" equals 0 and not "none" for comparison purposes
     def clean(self):

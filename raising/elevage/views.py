@@ -57,7 +57,8 @@ def dashboard(request, elevage_id):
     individus_morts = elevage.individus.filter(sante__etat='MORT')  # Morti
 
     form = Action()
-    
+    message = None
+
     if request.method == 'POST':
         form = Action(request.POST)
         if form.is_valid():
@@ -105,12 +106,20 @@ def dashboard(request, elevage_id):
                     elevage.nbTurn += 1
                     elevage.save()
                     
-                    # Controlla se il gioco è finito
-                    if elevage.individus.filter(etat='PRESENT').count() == 0:
-                        elevage.delete()
-                        return redirect('elevage_gameover')
                     
-                    return redirect('elevage_dashboard', elevage_id=elevage.id)
+            # Gestisci l'acquisto di medicine tramite il modello
+            if action['BuyMedicine'] > 0:
+                success, message = elevage.buy_medicine_and_heal(action['BuyMedicine'])
+                if not success:
+                    form.add_error(None, message)
+
+            # Controlla se il gioco è finito
+            if elevage.individus.filter(etat='PRESENT').count() == 0:
+                elevage.delete()
+                return redirect('elevage_gameover')
+
+            return redirect('elevage_dashboard', elevage_id=elevage.id)
+                    
                     
     return render(request, 'elevage/dashboard.html', {
         'elevage': elevage, 
@@ -121,6 +130,7 @@ def dashboard(request, elevage_id):
         'individus_en_guerison': individus_en_guerison,
         'individus_morts': individus_morts,
         'form': form, 
+        'message': message,  # Passa il messaggio al template
         'elevage_fields': elevage.getFieldsAndValues()
     })
 

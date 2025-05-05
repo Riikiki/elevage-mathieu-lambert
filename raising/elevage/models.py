@@ -8,6 +8,7 @@ class Rules(models.Model):
     foodPrice = models.IntegerField(default=10) #10€ per kg
     cagePrice = models.IntegerField(default=100)
     rabbitSalePrice = models.IntegerField(default=50)
+    medecinePrice = models.IntegerField(default=20) 
     
     #Consumption in kilogrammes per month
     
@@ -25,6 +26,7 @@ class Rules(models.Model):
     
     maxPossiblePerCage = models.IntegerField(default=10)
     probMortContamine = models.FloatField(default=0.2)
+    probGuerison = models.FloatField(default=0.5)
     
     def __str__(self):
         return "Règles de l'élevage"
@@ -196,7 +198,33 @@ class Elevage(models.Model):
                     individu.sante.save()
                     
         self.save()
-          
+    
+    def buy_medicine_and_heal(self, num_medicines):
+        """
+        Compra medicine e applica la probabilità di guarigione ai conigli malati.
+        """
+        rules = Rules.objects.first()
+        medicine_cost = num_medicines * rules.medecinePrice
+
+        if self.solde < medicine_cost:
+            return False, "Pas assez d'argent pour acheter des médicaments."
+
+        # Deduci il costo delle medicine
+        self.solde -= medicine_cost
+        self.save()
+
+        # Applica la probabilità di guarigione
+        prob_guerison = rules.probGuerison
+        individus_malades = self.individus.filter(sante__etat='CONTAMINE', etat='PRESENT')
+
+        healed_count = 0
+        for individu in individus_malades[:num_medicines]:
+            if randint(1, 100) <= prob_guerison * 100:  
+                individu.sante.etat = 'GUERISON'
+                individu.sante.save()
+                healed_count += 1
+
+        return True, f"{healed_count} lapins guéris."
 
 class Individu(models.Model):
     
