@@ -288,3 +288,142 @@ margin-top: 1rem;
 .chatbot-footer button:hover {
   background: #45a049;
 }
+
+/*------------------bar style-----------------------*/
+.chart-section {
+  margin-bottom: 2rem;
+}
+
+.chart-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.chart-btn {
+  padding: 0.5rem 1rem;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.chart-btn:hover {
+  background: #d0d0d0;
+}
+
+.chart-btn.active {
+  background: #4CAF50;
+  color: white;
+  
+}
+
+.view-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  min-height: 300px;
+  display: none;
+}
+.view-container.active {
+display: block;
+}
+#farm-chart {
+  width: 100% !important;
+  height: 400px !important;
+}   
+#male-chart{
+  width: 100%;
+  height: 400px;
+}
+#popupMales  .chart-section {
+  margin-bottom: 2rem;
+}
+
+#popupMales .chart-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#popupMales .chart-btn {
+  padding: 0.5rem 1rem;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+
+
+#popupMales .chart-btn:hover {
+  background: #d0d0d0;
+}
+
+#popupMales .chart-btn.active {
+  background: #4CAF50;
+  color: white;
+  
+}
+
+#popupMales .view-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  min-height: 300px;
+  display: none;
+}
+#popupMales   .view-container.active {
+display: block;
+}
+/*-------------------femelles-------------------*/
+#femelles-chart{
+  width: 100%;
+  height: 400px;
+}
+#popupFemales  .chart-section {
+  margin-bottom: 2rem;
+}
+
+#popupFemales .chart-controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+#popupFemales .chart-btn {
+  padding: 0.5rem 1rem;
+  background: #e0e0e0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+
+
+#popupFemales .chart-btn:hover {
+  background: #d0d0d0;
+}
+
+#popupFemales .chart-btn.active {
+  background: #4CAF50;
+  color: white;
+  
+}
+
+#popupFemales .view-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  min-height: 300px;
+  display: none;
+}
+#popupFemales   .view-container.active {
+display: block;
+}

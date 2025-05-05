@@ -60,6 +60,25 @@ def dashboard(request, elevage_id):
     }
     form = Action()
     
+    #compare l'age for the males and femelles
+    age_distribution = {
+        'labels': ['0-3 mois', '4-6 mois', '7-12 mois', '13-18 mois', '19+ mois'],
+        'male_data': [
+            individus_males.filter(age__lte=3).count(),
+            individus_males.filter(age__gt=3, age__lte=6).count(),
+            individus_males.filter(age__gt=6, age__lte=12).count(),
+            individus_males.filter(age__gt=12, age__lte=18).count(),
+            individus_males.filter(age__gt=18).count()
+        ],
+        'female_data': [
+            individus_femelles.filter(age__lte=3).count(),
+            individus_femelles.filter(age__gt=3, age__lte=6).count(),
+            individus_femelles.filter(age__gt=6, age__lte=12).count(),
+            individus_femelles.filter(age__gt=12, age__lte=18).count(),
+            individus_femelles.filter(age__gt=18).count()
+        ]
+    }
+    
     if request.method == 'POST':
         
         form = Action(request.POST)
@@ -139,7 +158,8 @@ def dashboard(request, elevage_id):
         'form' : form, 
         'actualData': actualData,
         'elevage_fields': elevage.getFieldsAndValues(),
-        'elevage_data_graphe':serialized_elevage
+        'elevage_data_graphe':serialized_elevage,
+        'age_distribution': age_distribution
         })
 
 def liste(request):

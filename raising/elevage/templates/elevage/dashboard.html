@@ -33,39 +33,79 @@
           </div>
         </div>
       
+      
         <h2>Individus</h2>
 
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
         <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
-
+            <!--l'age pour males-->
         <div id="popupMales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupMales')"> X </span>
             <h3>Mâles</h3>
-            <ul>
-              {% for male in individus_males %}
-                <li>Age : {{ male.age }} mois</li>
-              {% empty %}
-                <li>Aucun mâle trouvé.</li>
-              {% endfor %}
-            </ul>
+            <!--ce que pour comparasion l'age different-->
+            <div class="chart-section">
+              <div class="chart-controls">
+                <button class="chart-btn active" data-view="table">table</button>
+                <button class="chart-btn  " data-view="chart" data-type="bar">bar</button>
+                <button class="chart-btn " data-view="chart" data-type="pie">pie</button>
+              </div>
+
+              <div id="male-chart-view" class="view-container" style="display:none;">
+                <canvas id="male-chart" width="400" height="400"></canvas>
+              </div>
+
+              <div id="male-table-view" class="view-container">
+                <div class="info-box">
+                  <h2>Males :</h2>
+                  <ul class="info-list">
+                    {% for male in individus_males %}
+                      <li>Age : {{ male.age }} mois</li>
+                    {% empty %}
+                      <li>Aucun mâle trouvé.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+         <!--l'age pour males-->
 
-        <div id="popupFemales" class="popup">
+         <!--l'age pour femelles-->
+
+         <div id="popupFemales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupFemales')"> X </span>
             <h3>Femelles</h3>
-            <ul>
-              {% for female in individus_femelles %}
-                <li>Age : {{ female.age }} mois</li>
-              {% empty %}
-                <li>Aucun femelle trouvée.</li>
-              {% endfor %}
-            </ul>
+            <div class="chart-section">
+              <div class="chart-controls">
+                <button class="chart-btn active" data-view="table">table</button>
+                <button class="chart-btn  " data-view="chart" data-type="bar">bar</button>
+                <button class="chart-btn " data-view="chart" data-type="pie">pie</button>
+              </div>
+
+              <div id="femelles-chart-view" class="view-container" style="display:none;">
+                <canvas id="femelles-chart" width="400" height="400"></canvas>
+              </div>
+
+              <div id="femelles-table-view" class="view-container">
+                <div class="info-box">
+                  <h2>Males :</h2>
+                  <ul class="info-list">
+                    {% for female in individus_femelles %}
+                      <li>Age : {{ female.age }} mois</li>
+                    {% empty %}
+                      <li>Aucun femelle trouvé.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <!--l'age pour femelles-->
 
       <div class="form-box">
         <h2>Actions du tour</h2>
@@ -125,8 +165,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    
-    const chartData = {
+    // 
+    const mainChartData = {
         labels: ['Mâles', 'Femelles', 'Nourriture (kg)', 'Cages', 'Solde (€)'],
         datasets: [{
             label: 'Élevage Data',
@@ -155,16 +195,66 @@
         }]
     };
     
+    // 
+    const ageChartData = {
+        labels: {{ age_distribution.labels|safe }},
+        datasets: [{
+            label: 'Mâles',
+            data: {{ age_distribution.male_data|safe }},
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(153, 102, 255, 0.6)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    //
+    const FemellesageChartData = {
+      labels: {{ age_distribution.labels|safe }},
+      datasets: [{
+          label: 'femelles',
+          data: {{ age_distribution.female_data|safe }},
+          backgroundColor: [
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(153, 102, 255, 0.6)'
+          ],
+          borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1
+      }]
+  };
+    
     let currentChart = null;
-      // initialtion the chart
-      function initChart(type) {
+    let ageChart = null;
+    let femellesageChart=null;
+    
+    // initialtion the chart
+    function initChart(type) {
         const ctx = document.getElementById('farm-chart').getContext('2d');
         if (currentChart) {
             currentChart.destroy();
         }
         currentChart = new Chart(ctx, {
             type: type,
-            data: chartData,
+            data: mainChartData,
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -183,42 +273,155 @@
             }
         });
     }
-     
-      // change the chart
-      function switchView(view, chartType) {
-          document.querySelectorAll('.view-container').forEach(el => {
-              el.style.display = 'none';
-          });
-          
-          // choose the  styple de graphe
-          if (view === 'chart') {
-              document.getElementById('chart-view').style.display = 'block';
-              initChart(chartType);
-          } else {
-              document.getElementById('table-view').style.display = 'block';
+    
+    // 
+    function initAgeChart(type) {
+        const ctx = document.getElementById('male-chart').getContext('2d');
+        if (ageChart) {
+            ageChart.destroy();
+        }
+        ageChart = new Chart(ctx, {
+            type: type,
+            data: ageChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    //
+    function initFemellesAgeChart(type) {
+      const ctx = document.getElementById('femelles-chart').getContext('2d');
+      if (femellesageChart) {
+        femellesageChart.destroy();
+      }
+      femellesageChart = new Chart(ctx, {
+          type: type,
+          data:  FemellesageChartData,
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      position: 'top',
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              return `${context.dataset.label}: ${context.raw}`;
+                          }
+                      }
+                  }
+              }
           }
-          
-          // update 
-          document.querySelectorAll('.chart-btn').forEach(btn => {
+      });
+  }
+    
+    //change the chart
+    function switchMainView(view, chartType) {
+        //
+        document.querySelectorAll('#chart-view, #table-view').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // choose the  styple de graph
+        if (view === 'chart') {
+            document.getElementById('chart-view').style.display = 'block';
+            initChart(chartType);
+        } else {
+            document.getElementById('table-view').style.display = 'block';
+        }
+        
+        // update 
+        document.querySelectorAll('.chart-section .chart-btn').forEach(btn => {
             btn.classList.remove('active');
         });
         event.target.classList.add('active');
     }
     
+    // 
+    function switchAgeView(view, chartType) {
+        document.querySelectorAll('#male-chart-view, #male-table-view').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        if (view === 'chart') {
+            document.getElementById('male-chart-view').style.display = 'block';
+            initAgeChart(chartType);
+        } else {
+            document.getElementById('male-table-view').style.display = 'block';
+        }
+        
+        document.querySelectorAll('#popupMales .chart-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+    //
+    function switchFemellesAgeView(view, chartType) {
+      document.querySelectorAll('#femelles-chart-view, #femelles-table-view').forEach(el => {
+          el.style.display = 'none';
+      });
+      
+      if (view === 'chart') {
+          document.getElementById('femelles-chart-view').style.display = 'block';
+          initFemellesAgeChart(chartType);
+      } else {
+          document.getElementById('femelles-table-view').style.display = 'block';
+      }
+      
+      document.querySelectorAll('#popupFemales .chart-btn').forEach(btn => {
+          btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+  }
+    
     // cobination with the boutton
-    document.querySelectorAll('.chart-btn').forEach(btn => {
+    document.querySelectorAll('.chart-section .chart-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             const view = this.getAttribute('data-view');
             const chartType = this.getAttribute('data-type');
-            switchView(view, chartType);
+            switchMainView(view, chartType);
         });
     });
     
+    // 
+    document.querySelectorAll('#popupMales .chart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const view = this.getAttribute('data-view');
+            const chartType = this.getAttribute('data-type');
+            switchAgeView(view, chartType);
+        });
+    });
+    //
+    document.querySelectorAll('#popupFemales .chart-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+          const view = this.getAttribute('data-view');
+          const chartType = this.getAttribute('data-type');
+          switchFemellesAgeView(view, chartType);
+      });
+  });
     // default
-    document.querySelector('[data-type="table"]').click();
+    document.querySelector('.chart-section .chart-btn[data-view="table"]').click();
+    document.querySelector('#popupMales .chart-btn[data-view="table"]').click();
+    document.querySelector('#popupFemales .chart-btn[data-view="table"]').click();
 });
       
-      
   </script>
+      
+      
+
 
 {% endblock %}
