@@ -106,6 +106,25 @@
         </div>
       </div>
       <!--l'age pour femelles-->
+     
+      <!--create the graphe for the changement with the tour-->
+      <div class="trend-section">
+        <h2>Évolution de l'élevage</h2>
+        <div class="chart-controls">
+            <button class="toggle-btn active" data-dataset="sales">Ventes</button>
+            <button class="toggle-btn active" data-dataset="births">Naissances</button>
+            <button class="toggle-btn active" data-dataset="deaths">Morts</button>
+            <button class="toggle-btn active" data-dataset="food">Nourriture_kg</button>
+            <button class="toggle-btn active" data-dataset="cages">Cages</button>
+            <button class="toggle-btn active" data-dataset="money">Sold</button>
+        </div>
+        <div class="trend-container">
+            <canvas id="trend-chart"></canvas>
+        </div>
+    </div>
+
+  
+    <!--create the graphe for the changement with the tour-->
 
       <div class="form-box">
         <h2>Actions du tour</h2>
@@ -419,6 +438,109 @@
     document.querySelector('#popupFemales .chart-btn[data-view="table"]').click();
 });
       
+  </script>
+
+  <!--the structure for the graphe for the changement with the tour-->
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const history = {{ elevage.history|safe|default:"[]" }};
+    
+    // divide the date allowing the tour
+    const turns = [...new Set(history.map(item => item.turn))].sort((a,b) => a-b);
+    
+    // prepare the datebase
+    const datasets = {
+        sales_males: { label: "Mâles vendus", data: [], borderColor: 'rgb(54, 162, 235)' },
+        sales_females: { label: "Femelles vendues", data: [], borderColor: 'rgb(255, 99, 132)' },
+        births: { label: "Naissances", data: [], borderColor: 'rgb(75, 192, 192)' },
+        deaths: { label: "Morts", data: [], borderColor: 'rgb(255, 159, 64)' },
+        food: { label: "Nourriture (kg)", data: [], borderColor: 'rgb(153, 102, 255)' },
+        cages: { label: "Cages", data: [], borderColor: 'rgb(201, 203, 207)' },
+        money: { label: "Solde (€)", data: [], borderColor: 'rgb(255, 205, 86)' }
+    };
+  
+    // rempir the date
+    turns.forEach(turn => {
+        const turnData = history.filter(item => item.turn === turn);
+        
+        // selling
+        const sale = turnData.find(item => item.type === 'sale');
+        datasets.sales_males.data.push(sale?.details?.males_sold || 0);
+        datasets.sales_females.data.push(sale?.details?.females_sold || 0);
+        
+        // others
+        datasets.births.data.push(turnData.find(item => item.type === 'birth')?.details?.count || 0);
+        datasets.deaths.data.push(turnData.find(item => item.type === 'death')?.details?.count || 0);
+        datasets.food.data.push(turnData.find(item => item.type === 'food')?.details?.total || {{ elevage.quantite_nourriture }});
+        datasets.cages.data.push(turnData.find(item => item.type === 'cage')?.details?.total || {{ elevage.nb_cages }});
+        datasets.money.data.push(turnData.find(item => item.type === 'sale')?.details?.total || {{ elevage.solde }});
+    });
+  
+    // create the graphes
+    const ctx = document.getElementById('trend-chart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: turns,
+            datasets: Object.values(datasets).map(ds => ({
+                ...ds,
+                hidden: false,
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: false
+            }))
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: { display: true, text: 'Quantité' }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: { display: true, text: 'Montant (€)' },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+     // update for each 5 seconds
+     function refreshChart() {
+      fetch(`/api/elevage/{{ elevage.id }}/history`)
+  .then(res => res.json())
+  .then(updateChartData);
+  }
+  setInterval(refreshChart, 5000);
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+          this.classList.toggle('active');
+          const dataset = this.dataset.dataset;
+          
+          // dealing some special situation
+          if (dataset === 'sales') {
+              chart.setDatasetVisibility(0, this.classList.contains('active'));
+              chart.setDatasetVisibility(1, this.classList.contains('active'));
+          } else {
+              const datasetIndex = Object.keys(datasets).findIndex(key => key.startsWith(dataset));
+              if (datasetIndex >= 0) {
+                  chart.setDatasetVisibility(datasetIndex, this.classList.contains('active'));
+              }
+          }
+          
+          chart.update();
+      });
+  });
+  });
   </script>
       
       

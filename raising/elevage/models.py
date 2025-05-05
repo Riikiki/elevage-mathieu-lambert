@@ -1,3 +1,4 @@
+from datetime import datetime
 from decimal import Decimal
 from random import randint, choice
 from django.db import models
@@ -177,6 +178,15 @@ class Elevage(models.Model):
             idToKill = [individu.id for individu in toKill]
             Individu.objects.filter(id__in=idToKill).update(etat='MORT')
         
+        self.save()
+    #create the function of history for story the date for each tour
+    def log_turn(self,action_type,details):
+        self.history.append({
+            'turn':self.nbTurn,
+            'type':action_type,
+            'details':details,
+            'timestamp':datetime.now().isoformat()
+        })
         self.save()
           
 

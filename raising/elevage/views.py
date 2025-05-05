@@ -140,6 +140,33 @@ def dashboard(request, elevage_id):
                     elevage.nbTurn += 1
                     elevage.save()
                     
+                    #noting the date of selling for every tour
+                    if action['SellFemales']>0 or action['SellFemales']>0:
+                        elevage.log_turn('sale',{
+                              'males_sold':action['SellMales'],
+                              'females_sold':action['SellFemales']
+                          })
+                    #noting the date of birth for every tour
+                    new_births = Individu.objects.filter(elevage=elevage, age=0).count()
+                    if new_births > 0:
+                        elevage.log_turn('birth', {'count': new_births})
+                    #noting the date of death for every tour
+                    deaths = Individu.objects.filter(elevage=elevage, etat='MORT').count()
+                    if deaths > 0:
+                        elevage.log_turn('death', {'count': deaths})
+                    ##noting the date of changement of food for every tour
+                    if action['BuyFood'] > 0:
+                        elevage.log_turn('food', {
+                         'change': action['BuyFood'],
+                           'total': elevage.quantite_nourriture
+                            })
+                    ##noting the date of the changement of cages for every tour
+                    if action['BuyCages'] > 0:
+                        elevage.log_turn('cage', {
+                         'change': action['BuyCages'],
+                         'total': elevage.nb_cages
+                           })
+                    
                     # Check if the game is over
                     if elevage.individus.filter(etat='PRESENT').count() == 0:
                         elevage.delete()
