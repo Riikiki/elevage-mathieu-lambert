@@ -4,7 +4,9 @@
   <div class="container">
     
     <h1 class="h1-dashboard">{{ elevage.nom }}</h1>
-
+     <!---->
+    <div class="row">
+      <!---->
     <div class="columns">
       
   <!-- lieu pour controler le changement de graphes -->
@@ -32,12 +34,23 @@
             </ul>
           </div>
         </div>
+        <!---->
+      </div>
+    </div>
+     <!---->
       
-      
+     <div class="column">
+      <!---->
+
         <h2>Individus</h2>
+
+        <!---->
+        <div class="population-buttons">
+          <!---->
 
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
         <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
+       
             <!--l'age pour males-->
         <div id="popupMales" class="popup">
           <div class="popup-content">
@@ -70,6 +83,8 @@
             </div>
           </div>
         </div>
+        
+  
          <!--l'age pour males-->
 
          <!--l'age pour femelles-->
@@ -105,9 +120,15 @@
           </div>
         </div>
       </div>
+      <!---->
+    </div>
+  </div>
       <!--l'age pour femelles-->
-     
+      
       <!--create the graphe for the changement with the tour-->
+       <!---->
+      <div class="row">
+      <div class="full-width-column">
       <div class="trend-section">
         <h2>Évolution de l'élevage</h2>
         <div class="chart-controls">
@@ -122,10 +143,16 @@
             <canvas id="trend-chart"></canvas>
         </div>
     </div>
+     <!---->
+  </div>
+</div>
 
   
     <!--create the graphe for the changement with the tour-->
-
+      <!---->
+      <div class="row">
+      <div class="full-width-column">
+        <!---->
       <div class="form-box">
         <h2>Actions du tour</h2>
         <form method="post">
@@ -151,6 +178,10 @@
 
     <a href="{% url 'elevage_liste' %}">Retour à la liste</a>
   </div>
+   <!---->
+</div>
+</div>
+
 
   <a onclick="openPopup('chatbotPopup')" 
      style="position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-size: 18px; cursor: pointer;">
