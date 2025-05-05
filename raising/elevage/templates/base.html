@@ -42,7 +42,7 @@
         if (MFDiff >= 0){
           for(let i = 0; i < nbFemale; i++){
             if (Math.round(Math.random()) === 1){
-              nbRabbiesPredicted += Math.round(Math.random()*4 ) + 1;
+              nbRabbiesPredicted += Math.round(Math.random()*3 ) + 1;
             } 
           }
         }
@@ -81,15 +81,15 @@
 
             let forecast = "";
 
-            if (food > nbRabbit * 2) {
+            if (food > nbRabbit * 0.250 * 2) {
               forecast += "Tu as assez de nourriture pour nourrir tes lapins sur plusieurs tours.<br> ";
-            } else if (food > nbRabbit) {
+            } else if (food > nbRabbit * 0.250) {
               forecast += "Tu as juste assez de nourriture pour le prochain tour.<br> ";
             } else {
               forecast += "Tu vas manquer de nourriture au prochain tour !<br> ";
             }
       
-            if (funds > 200) {
+            if (funds > 300) {
               forecast += "Ton solde est confortable, tu pourras acheter cages ou nourriture facilement.<br>";
             } else {
               forecast += "Ton solde est bas, vends quelques lapins si besoin.<br>";
@@ -108,7 +108,7 @@
               advice += "Achète des cages rapidement, tu manques de place ! <br>";
             }
       
-            if (food < nbRabbit + 0.250) {
+            if (food < nbRabbit * 0.250) {
               advice += "Achète plus de nourriture pour éviter la famine. <br>";
             }
       
@@ -125,7 +125,7 @@
 
           } else if (message.toLowerCase().match(/\bcombien\b.*\bbébé lapins?\b/i) !== null){
 
-            botMessage.innerHTML = "<strong>Fred :</strong> Regex is good" + rabbiesCalculator() + "<== nbRabbiespredicted"
+            botMessage.innerHTML = "<strong>Fred :</strong> D'après mes calculs savants d'éleveur le nombre de bébé lapin que tu peux avoir au prochain tour est" + rabbiesCalculator();
             chatbotBody.appendChild(botMessage);
 
           }else {

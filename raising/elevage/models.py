@@ -1,3 +1,4 @@
+from decimal import Decimal
 from random import randint, choice
 from django.db import models
 
@@ -31,7 +32,7 @@ class Elevage(models.Model):
     # Ressources
     nb_males = models.PositiveBigIntegerField(default=1)
     nb_femelles = models.PositiveBigIntegerField(default=1)
-    quantite_nourriture = models.FloatField(default=0)
+    quantite_nourriture = models.DecimalField(default=0, max_digits=100, decimal_places=2)
     nb_cages = models.PositiveBigIntegerField(default=1)
     solde = models.IntegerField(default=0)
     
@@ -119,8 +120,8 @@ class Elevage(models.Model):
             consumptionPerIndividuals.append((individu, consumption))
             totalConsumption += consumption
         
-        if totalConsumption <= self.quantite_nourriture:
-            self.quantite_nourriture -= totalConsumption
+        if Decimal(totalConsumption) <= self.quantite_nourriture:
+            self.quantite_nourriture -= Decimal(totalConsumption)
         else:
             
             #sort the individuals by age and remove the oldest ones first
@@ -131,9 +132,9 @@ class Elevage(models.Model):
             
             for individu, consumption in sortedIndividuals:
                 
-                if remainingFood >= consumption:
+                if remainingFood >= Decimal(consumption):
                     
-                    remainingFood -= consumption
+                    remainingFood -= Decimal(consumption)
                     self.quantite_nourriture = remainingFood
                     
                 else:
