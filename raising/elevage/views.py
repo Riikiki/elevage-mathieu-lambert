@@ -7,7 +7,15 @@ def home(request):
     return render(request, 'elevage/home.html')
 
 def rules(request):
-    return render(request, 'elevage/rules.html')
+    rules = Rules.objects.first()
+    rules = {
+    'probGuerison': rules.probGuerison * 100,
+    'probMortContamine': rules.probMortContamine * 100,
+    'probContamination': rules.probContaminaison * 100,
+    'maxPerCage': rules.maxPerCage,
+    'maxPossiblePerCage': rules.maxPossiblePerCage,
+}
+    return render(request, 'elevage/rules.html', {'rules': rules})
 
 def gameover(request):
     return render(request, 'elevage/gameover.html')
