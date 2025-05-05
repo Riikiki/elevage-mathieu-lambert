@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action
 from .models import Elevage, Individu, Rules
+from django.core import serializers
 
 def home(request):
     return render(request, 'elevage/home.html')
@@ -48,13 +49,20 @@ def nouveau(request):
 def dashboard(request, elevage_id):
     elevage = get_object_or_404(Elevage, id=elevage_id)
     individus = elevage.individus.filter(etat='PRESENT')
-    individus_males = individus.filter(sexe='M')
+    individus_males = individus.filter(sexe='M', etat='PRESENT')
     individus_femelles = individus.filter(sexe='F')
     
     # Filtra gli individui in base allo stato di salute
     individus_malades = individus.filter(sante__etat='CONTAMINE')  # Contaminati
     individus_en_guerison = individus.filter(sante__etat='GUERISON')  # In guarigione
     individus_morts = elevage.individus.filter(sante__etat='MORT')  # Morti
+    # actualData = serializers.serialize('json', individus, fields=('id', 'sexe', 'age', 'etat', 'sante'))
+    actualData = {
+        'model': 'elevage.Elevage',
+        'pk' : elevage.pk,
+        'fields' :elevage.getFieldsAndValues()
+
+    }
 
     form = Action()
     message = None
@@ -132,7 +140,8 @@ def dashboard(request, elevage_id):
         'individus_morts': individus_morts,
         'form': form, 
         'message': message,  # Passa il messaggio al template
-        'elevage_fields': elevage.getFieldsAndValues()
+        'elevage_fields': elevage.getFieldsAndValues(),
+        'actualData': actualData,
     })
 
 def liste(request):

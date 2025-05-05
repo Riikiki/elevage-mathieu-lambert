@@ -14,6 +14,9 @@
         {% endblock %}
     </main>
     <script>
+
+      var actualData = {{ actualData|safe }};
+
       function openPopup(id) {
         const popup = document.getElementById(id);
         popup.style.display = "flex"; 
@@ -26,28 +29,109 @@
       function closePopup(id) {
         document.getElementById(id).style.display = "none";
       }
+
+      function rabbiesCalculator(){
+
+        var nbRabbiesPredicted = 0;
+        elevage = actualData.fields;
+        nbFemale = elevage.femelles;
+        nbMale = elevage.males;
+
+        MFDiff = nbMale - nbFemale;
+
+        if (MFDiff >= 0){
+          for(let i = 0; i < nbFemale; i++){
+            if (Math.round(Math.random()) === 1){
+              nbRabbiesPredicted += Math.round(Math.random()*3 ) + 1;
+            } 
+          }
+        }
+
+        return nbRabbiesPredicted;
+      }
     
-      function sendMessage(playerName) {
+      function sendMessage(playerName, elevageId) {
         const input = document.getElementById("chatbotInput");
         const message = input.value.trim();
+        console.log("message=", message)
+        const feature = 0;
+
         if (message) {
           const chatbotBody = document.querySelector(".chatbot-body");
           const userMessage = document.createElement("p");
-          userMessage.innerHTML = "<strong>" + playerName + ":</strong> " + message
+          userMessage.innerHTML = "<strong>" + playerName + ":</strong> " + message 
           chatbotBody.appendChild(userMessage);
           input.value = "";
           
           // We will list every type of service and response to the userMessage
           // For exemple : this will just answer this for every message
           const botMessage = document.createElement("p");
-          botMessage.innerHTML = "<strong>Fred :</strong> This is actually a test message.";
-          chatbotBody.appendChild(botMessage);
+          // botMessage.innerHTML = "<strong>Fred :</strong> This is actually a test message.";
+          //chatbotBody.appendChild(botMessage);
 
-          // Needs to answer for Assistance
+          // Data reading : 
+          const elevage = actualData.fields;
+          const nbRabbit = elevage.nbLapins;
+          const nbCages = elevage.nb_cages;
+          const funds = elevage.solde;
+          const food = elevage.quantite_nourriture;
+          const nbTurns = elevage.nbTurn;
 
-          // Needs to answer for forecast
+          if(message.toLowerCase().includes("prédis") || message.toLowerCase().includes("prédire") ) { // PLayer ask for forecast with values he enters after
 
-          // Needs for for not dying
+            let forecast = "";
+
+            if (food > nbRabbit * 0.250 * 2) {
+              forecast += "Tu as assez de nourriture pour nourrir tes lapins sur plusieurs tours.<br> ";
+            } else if (food > nbRabbit * 0.250) {
+              forecast += "Tu as juste assez de nourriture pour le prochain tour.<br> ";
+            } else {
+              forecast += "Tu vas manquer de nourriture au prochain tour !<br> ";
+            }
+      
+            if (funds > 300) {
+              forecast += "Ton solde est confortable, tu pourras acheter cages ou nourriture facilement.<br>";
+            } else {
+              forecast += "Ton solde est bas, vends quelques lapins si besoin.<br>";
+            }
+      
+            let predictedTurn = nbTurns + 1;
+            botMessage.innerHTML = "<strong>Fred :</strong> Très bien, si je comprends bien, tu veux que je te prédises le prochain tour ?" +
+                                   "Voici ma prédiction pour le tour " + predictedTurn + ":<br>" + forecast;
+            chatbotBody.appendChild(botMessage);
+            
+          }else if (message.toLowerCase().match(/\bconseils?\b/i) !== null) {
+
+            let advice = "";
+      
+            if (nbCages < nbRabbit / 6) {
+              advice += "Achète des cages rapidement, tu manques de place ! <br>";
+            }
+      
+            if (food < nbRabbit * 0.250) {
+              advice += "Achète plus de nourriture pour éviter la famine. <br>";
+            }
+      
+            if (funds < 200) {
+              advice += "Pense à vendre quelques lapins pour regonfler ton solde. <br>";
+            }
+      
+            if (!advice) {
+              advice = "Tout va bien pour l'instant. Continue comme ça et surveille ton élevage !<br>";
+            } 
+
+            botMessage.innerHTML = "<strong>Fred :</strong> Voici mes conseils basés sur ta situation actuelle :<br><br>" + advice;
+            chatbotBody.appendChild(botMessage);
+
+          } else if (message.toLowerCase().match(/\bcombien\b.*\bbébé lapins?\b/i) !== null){
+
+            botMessage.innerHTML = "<strong>Fred :</strong> D'après mes calculs savants d'éleveur le nombre de bébé lapin que tu peux avoir au prochain tour est" + rabbiesCalculator();
+            chatbotBody.appendChild(botMessage);
+
+          }else {
+            botMessage.innerHTML = "<strong>Fred :</strong> Je n'ai pas compris ta demande. Comment puis-je t'aider ?";
+            chatbotBody.appendChild(botMessage);
+          }
         }
       }
     </script>
