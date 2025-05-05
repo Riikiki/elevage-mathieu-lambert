@@ -1,7 +1,7 @@
 from django import forms
-from .models import Elevage
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Elevage
 
 class ElevageForm(forms.ModelForm):
     
@@ -35,6 +35,7 @@ class Action(forms.Form):
                 cleaned_data[key] = 0
         return cleaned_data
     
+
 class InscriptionForm(UserCreationForm):
     email = forms.EmailField(required=True)
     class Meta:

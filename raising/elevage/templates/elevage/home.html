@@ -18,10 +18,16 @@
             <button>Règle du jeu</button>
         </a>
 
-        <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank">
-            <button>Donate</button>
-        </a>
+        {% if user.is_authenticated %}
+        <form method="post" action="{% url 'logout' %}">
+          {% csrf_token %}
+          <button type="submit">Se déconnecter</button>
+        </form>
+        {% endif %}
+
     </div>
 </div>
+
+
 
 {% endblock %}

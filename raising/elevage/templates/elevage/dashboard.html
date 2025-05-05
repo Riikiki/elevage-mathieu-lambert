@@ -3,7 +3,9 @@
 {% block content %}
   <div class="container">
     
-    <h1 class="h1-dashboard">{{ elevage.nom }}</h1>
+    <h1 class="h1-dashboard">
+      {{ elevage.nom }} - {{ elevage.utilisateur }}
+    </h1>
 
     <div class="columns">
       <div class="info-box">

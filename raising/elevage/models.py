@@ -27,9 +27,9 @@ class Rules(models.Model):
 
 class Elevage(models.Model):
     
-    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, related_name="elevages")
-    nom = models.CharField(max_length=100, default='Partie sans nom')
-    
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, null= True, blank=True, related_name="elevages")
+    nom = models.CharField(max_length=100, default='Elevage Sans nom')
+
     # Ressources
     nb_males = models.PositiveBigIntegerField(default=1)
     nb_femelles = models.PositiveBigIntegerField(default=1)
@@ -193,9 +193,4 @@ class Individu(models.Model):
             "Age": self.age,
             "État": self.etat,
         }
-    
-        
-       
-
-    
     

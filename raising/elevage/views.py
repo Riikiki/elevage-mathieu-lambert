@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action, InscriptionForm
 from .models import Elevage, Individu, Rules
-from django.contrib.auth import logout
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
 from django.contrib.auth.decorators import login_required
 
 @login_required
@@ -14,14 +16,16 @@ def rules(request):
 def gameover(request):
     return render(request, 'elevage/gameover.html')
 
-@login_required
 def nouveau(request):
     if request.method == 'POST':
         
         form = ElevageForm(request.POST)
         if form.is_valid():
             
-            elevage = form.save()
+            elevage = form.save(commit=False)
+            if request.user.is_authenticated:
+                elevage.utilisateur = request.user
+            elevage.save()
             
              # Create Individus for males
             for _ in range(elevage.nb_males):
@@ -49,7 +53,6 @@ def nouveau(request):
 
     return render(request, 'elevage/new.html', {'form': form})
 
-@login_required
 def dashboard(request, elevage_id):
     
     elevage = get_object_or_404(Elevage, id=elevage_id)
@@ -140,18 +143,37 @@ def liste(request):
     return render(request, 'elevage/liste.html', {'elevages': elevages})
 
 def login(request):
-    return render(request, 'elevage/login.html')
+    return render(request, 'registration/login.html')
 
-def logout_view(request):
-    logout(request)
+def logout(request):
+    auth_logout(request)
+    return redirect('login')
+
+def connexion(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            return render(request,'elevage/home.html')
+        else:
+            return render(request, 'registration/connexion.html', {'error': 'Identifiants invalides.'})
+    else:
+        return render(request, 'registration/connexion.html')
+
 
 def inscription(request):
     if request.method == "POST":
         form = InscriptionForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)  # Connexion automatique après inscription
-            return redirect('liste')
+            auth_login (request, user)
+            return render(request, 'elevage/home.html')
+        else:
+            return render(request, 'elevage/inscription.html', {
+                'form': form,
+            })
     else:
         form = InscriptionForm()
-    return render(request, 'elevage/inscription.html', {'form': form})
+        return render(request, 'elevage/inscription.html', {'form': form})
