@@ -52,6 +52,7 @@ def dashboard(request, elevage_id):
     individus = elevage.individus.filter(etat='PRESENT')
     individus_males = individus.filter(sexe='M', etat='PRESENT')
     individus_femelles = individus.filter(sexe='F')
+    female_Gravide = individus.filter(sexe='F', age__gte=6);
     # actualData = serializers.serialize('json', Elevage.objects.filter(pk=elevage_id))
     actualData = {
         'model' : 'elevage.Elevage',

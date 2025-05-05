@@ -50,15 +50,20 @@ class Elevage(models.Model):
     def getFemalesPresent(self):
         return self.individus.filter(sexe='F', etat='PRESENT').count()
     
+    def getGravidePresent(self):
+        return self.individus.filter(sexe='F', etat='PRESENT', age__gte=6).count()
+    
     def getFieldsAndValues(self):
         males = self.getMalesPresent()
         femelles = self.getFemalesPresent()
         nbLapins = males + femelles
+        femaleGravide = self.getGravidePresent()
 
         return {
             "nom": self.nom,
             "males": males,
             "femelles": femelles,
+            "femelle_Gravide" : femaleGravide,
             "nbLapins": nbLapins,
             "quantite_nourriture": float(self.quantite_nourriture),
             "nb_cages": self.nb_cages,

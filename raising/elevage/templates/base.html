@@ -34,13 +34,13 @@
 
         var nbRabbiesPredicted = 0;
         elevage = actualData.fields;
-        nbFemale = elevage.femelles;
+        nbFemaleGravide = elevage.femelles_Gravide;
         nbMale = elevage.males;
 
-        MFDiff = nbMale - nbFemale;
+        MFDiff = nbMale - nbFemaleGravide;
 
         if (MFDiff >= 0){
-          for(let i = 0; i < nbFemale; i++){
+          for(let i = 0; i < nbFemaleGravide; i++){
             if (Math.round(Math.random()) === 1){
               nbRabbiesPredicted += Math.round(Math.random()*3 ) + 1;
             } 
@@ -77,55 +77,65 @@
           const food = elevage.quantite_nourriture;
           const nbTurns = elevage.nbTurn;
 
-          if(message.toLowerCase().includes("prédis") || message.toLowerCase().includes("prédire") ) { // PLayer ask for forecast with values he enters after
+          if(message.toLowerCase().match(/\b(prédis?|prédire)(?!.*bébés?|.*lapins?)/i) !== null) { // PLayer ask for forecast with values he enters after
 
             let forecast = "";
 
-            if (food > nbRabbit * 0.250 * 2) {
-              forecast += "Tu as assez de nourriture pour nourrir tes lapins sur plusieurs tours.<br> ";
-            } else if (food > nbRabbit * 0.250) {
-              forecast += "Tu as juste assez de nourriture pour le prochain tour.<br> ";
-            } else {
-              forecast += "Tu vas manquer de nourriture au prochain tour !<br> ";
+            if (nbRabbit === 0){
+              forecast += "Tu vas perdre. Désolé."
+            }else {
+
+              if (food > nbRabbit * 0.250 * 2) {
+                forecast += "Tu as assez de nourriture pour nourrir tes lapins sur plusieurs tours. ";
+              } else if (food > nbRabbit * 0.250) {
+                forecast += "Tu as juste assez de nourriture pour le prochain tour. ";
+              } else {
+                forecast += "Tu vas manquer de nourriture au prochain tour ! ";
+              }
+        
+              if (funds > 300) {
+                forecast += "Ton solde est confortable, tu pourras acheter cages ou nourriture facilement. ";
+              } else {
+                forecast += "Ton solde est bas, vends quelques lapins si besoin. ";
+              }
             }
-      
-            if (funds > 300) {
-              forecast += "Ton solde est confortable, tu pourras acheter cages ou nourriture facilement.<br>";
-            } else {
-              forecast += "Ton solde est bas, vends quelques lapins si besoin.<br>";
-            }
-      
+
             let predictedTurn = nbTurns + 1;
             botMessage.innerHTML = "<strong>Fred :</strong> Très bien, si je comprends bien, tu veux que je te prédises le prochain tour ?" +
-                                   "Voici ma prédiction pour le tour " + predictedTurn + ":<br>" + forecast;
+                                   "Voici ma prédiction pour le tour " + predictedTurn + " :<br><br> " + forecast;
             chatbotBody.appendChild(botMessage);
             
           }else if (message.toLowerCase().match(/\bconseils?\b/i) !== null) {
 
             let advice = "";
+
+            if(nbRabbit === 0){
+              advice = "Peu importe ce que tu fais, tu vas perdre. Sors un peu voir le soleil, le ciel est beau, les oiseaux chantent."
+            }else{
       
-            if (nbCages < nbRabbit / 6) {
-              advice += "Achète des cages rapidement, tu manques de place ! <br>";
+              if (nbCages < nbRabbit / 6) {
+                advice += "Achète des cages rapidement, tu manques de place ! ";
+              }
+        
+              if (food < nbRabbit * 0.250) {
+                advice += "Achète plus de nourriture pour éviter la famine. ";
+              }
+        
+              if (funds < 200) {
+                advice += "Pense à vendre quelques lapins pour regonfler ton solde. ";
+              }
+        
+              if (!advice) {
+                advice = "Tout va bien pour l'instant. Continue comme ça et surveille ton élevage ! ";
+              } 
             }
-      
-            if (food < nbRabbit * 0.250) {
-              advice += "Achète plus de nourriture pour éviter la famine. <br>";
-            }
-      
-            if (funds < 200) {
-              advice += "Pense à vendre quelques lapins pour regonfler ton solde. <br>";
-            }
-      
-            if (!advice) {
-              advice = "Tout va bien pour l'instant. Continue comme ça et surveille ton élevage !<br>";
-            } 
 
             botMessage.innerHTML = "<strong>Fred :</strong> Voici mes conseils basés sur ta situation actuelle :<br><br>" + advice;
             chatbotBody.appendChild(botMessage);
 
           } else if (message.toLowerCase().match(/\bcombien\b.*\bbébé lapins?\b/i) !== null){
 
-            botMessage.innerHTML = "<strong>Fred :</strong> D'après mes calculs savants d'éleveur le nombre de bébé lapin que tu peux avoir au prochain tour est" + rabbiesCalculator();
+            botMessage.innerHTML = "<strong>Fred :</strong> D'après mes calculs savants d'éleveur le nombre de bébé lapin que tu peux avoir au prochain tour est " + rabbiesCalculator();
             chatbotBody.appendChild(botMessage);
 
           }else {
