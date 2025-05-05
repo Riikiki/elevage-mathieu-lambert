@@ -245,6 +245,15 @@ class Elevage(models.Model):
                     individu.sante.etat = 'CONTAMINE'
                     individu.sante.save()
 
+    def heal_guérison(self):
+        """
+        Trasforma tutti i lapini in stato 'GUERISON' in 'SANTE'.
+        """
+        individus_en_guerison = self.individus.filter(sante__etat='GUERISON', etat='PRESENT')
+        for individu in individus_en_guerison:
+            individu.sante.etat = 'SANTE'
+            individu.sante.save()
+
 class Individu(models.Model):
     
     sexe = models.CharField(max_length=10, choices=[('M', 'Mâle'), ('F', 'Femelle')])
