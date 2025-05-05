@@ -127,6 +127,9 @@ def dashboard(request, elevage_id):
                         return redirect('elevage_gameover')
                     
                     return redirect('elevage_dashboard', elevage_id=elevage.id)
+    elevage_data_graphe=Elevage.objects.all()
+    serialized_elevage=serializers.serialize("json",elevage_data_graphe)
+              
                     
     return render(request, 'elevage/dashboard.html', {
         'elevage': elevage, 
@@ -135,7 +138,9 @@ def dashboard(request, elevage_id):
         'individus_femelles': individus_femelles,
         'form' : form, 
         'actualData': actualData,
-        'elevage_fields': elevage.getFieldsAndValues()})
+        'elevage_fields': elevage.getFieldsAndValues(),
+        'elevage_data_graphe':serialized_elevage
+        })
 
 def liste(request):
     elevages = Elevage.objects.all()
