@@ -60,7 +60,7 @@ class Elevage(models.Model):
             "males": males,
             "femelles": femelles,
             "nbLapins": nbLapins,
-            "quantite_nourriture": self.quantite_nourriture,
+            "quantite_nourriture": float(self.quantite_nourriture),
             "nb_cages": self.nb_cages,
             "solde": self.solde,
             "nbTurn": self.nbTurn,
