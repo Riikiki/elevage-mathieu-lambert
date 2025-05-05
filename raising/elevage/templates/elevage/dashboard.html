@@ -9,9 +9,7 @@
       <div class="info-box">
         <h2>Informations générales :</h2>
         <ul class="info-list">
-          {% comment %} Trying to update along the changes but it doesn't work i want to throw myself out of the window {% endcomment %}
-          {% comment %} Nevermind I found it {% endcomment %}
-          {% for field, value in elevage.getFieldsAndValues.items%}
+          {% for field, value in elevage.getFieldsAndValues.items %}
             <li><strong>{{ field }}:</strong> {{ value }}</li>
           {% endfor %}
         </ul>
@@ -20,6 +18,15 @@
 
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
         <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
+
+        <div class="health-stats">
+          <h3>Statistiques de santé</h3>
+          <ul>
+            <li>Malades : {{ individus_malades|length }}</li>
+            <li>En guérison : {{ individus_en_guerison|length }}</li>
+            <li>Morts : {{ individus_morts|length }}</li>
+          </ul>
+        </div>
 
         <div id="popupMales" class="popup">
           <div class="popup-content">
