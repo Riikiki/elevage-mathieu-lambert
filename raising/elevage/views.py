@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action
 from .models import Elevage, Individu, Rules
@@ -173,8 +174,7 @@ def dashboard(request, elevage_id):
                         return redirect('elevage_gameover')
                     
                     return redirect('elevage_dashboard', elevage_id=elevage.id)
-    elevage_data_graphe=Elevage.objects.all()
-    serialized_elevage=serializers.serialize("json",elevage_data_graphe)
+   
               
                     
     return render(request, 'elevage/dashboard.html', {
@@ -185,7 +185,6 @@ def dashboard(request, elevage_id):
         'form' : form, 
         'actualData': actualData,
         'elevage_fields': elevage.getFieldsAndValues(),
-        'elevage_data_graphe':serialized_elevage,
         'age_distribution': age_distribution
         })
 

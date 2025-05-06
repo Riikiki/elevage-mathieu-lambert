@@ -8,4 +8,5 @@ urlpatterns = [
     path('elevage/<int:elevage_id>/', views.dashboard, name='elevage_dashboard'),
     path('liste/', views.liste, name='elevage_liste'),
     path('gameover/', views.gameover, name='elevage_gameover'),
+
 ]

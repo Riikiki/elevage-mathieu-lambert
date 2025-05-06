@@ -33,7 +33,7 @@ class Elevage(models.Model):
     # Ressources
     nb_males = models.PositiveBigIntegerField(default=1)
     nb_femelles = models.PositiveBigIntegerField(default=1)
-    quantite_nourriture = models.DecimalField(default=0, max_digits=100, decimal_places=2)
+    quantite_nourriture = models.FloatField(default=0)
     nb_cages = models.PositiveBigIntegerField(default=1)
     solde = models.IntegerField(default=0)
     
@@ -41,6 +41,8 @@ class Elevage(models.Model):
     nbTurn = models.PositiveBigIntegerField(default=0)
     nbSoldRabbits = models.PositiveBigIntegerField(default=0)
     moneyMade = models.BigIntegerField(default=0)
+    
+    history=models.JSONField(default=list)
 
     def __str__(self):
         return self.nom
@@ -121,8 +123,8 @@ class Elevage(models.Model):
             consumptionPerIndividuals.append((individu, consumption))
             totalConsumption += consumption
         
-        if Decimal(totalConsumption) <= self.quantite_nourriture:
-            self.quantite_nourriture -= Decimal(totalConsumption)
+        if totalConsumption <= self.quantite_nourriture:
+            self.quantite_nourriture -= totalConsumption
         else:
             
             #sort the individuals by age and remove the oldest ones first
