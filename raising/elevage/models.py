@@ -222,11 +222,9 @@ class Elevage(models.Model):
         if self.solde < medicine_cost:
             return False, "Pas assez d'argent pour acheter des médicaments."
 
-        # Deduci il costo delle medicine
         self.solde -= medicine_cost
         self.save()
 
-        # Applica la probabilità di guarigione
         prob_guerison = rules.probGuerison
         individus_malades = self.individus.filter(sante__etat='CONTAMINE', etat='PRESENT')
 
@@ -241,14 +239,17 @@ class Elevage(models.Model):
 
     def contaminate_if_any_sick(self):
         rules = Rules.objects.first()
-        # Controlla se c'è almeno un coniglio malato (CONTAMINE e PRESENT)
+
         if self.individus.filter(sante__etat='CONTAMINE', etat='PRESENT').exists():
             prob = rules.probContaminaison
-            # Per ogni coniglio sano (SANTE e PRESENT)
+
             for individu in self.individus.filter(sante__etat='SANTE', etat='PRESENT'):
                 if randint(1, 100) <= prob * 100:
                     individu.sante.etat = 'CONTAMINE'
                     individu.sante.save()
+
+    def heal_guérison(self):
+        Sante.objects.filter(individu__in=self.individus.filter(sante__etat='GUERISON', etat='PRESENT')).update(etat='SANTE')
 
 class Individu(models.Model):
     

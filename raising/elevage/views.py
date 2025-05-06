@@ -7,7 +7,15 @@ def home(request):
     return render(request, 'elevage/home.html')
 
 def rules(request):
-    return render(request, 'elevage/rules.html')
+    rules = Rules.objects.first()
+    rules = {
+    'probGuerison': rules.probGuerison * 100,
+    'probMortContamine': rules.probMortContamine * 100,
+    'probContamination': rules.probContaminaison * 100,
+    'maxPerCage': rules.maxPerCage,
+    'maxPossiblePerCage': rules.maxPossiblePerCage,
+}
+    return render(request, 'elevage/rules.html', {'rules': rules})
 
 def gameover(request):
     return render(request, 'elevage/gameover.html')
@@ -60,10 +68,9 @@ def dashboard(request, elevage_id):
     }
     form = Action()
     
-    # Filtra gli individui in base allo stato di salute
-    individus_malades = individus.filter(sante__etat='CONTAMINE')  # Contaminati
-    individus_en_guerison = individus.filter(sante__etat='GUERISON')  # In guarigione
-    individus_morts = elevage.individus.filter(sante__etat='MORT')  # Morti
+    individus_malades = individus.filter(sante__etat='CONTAMINE')  
+    individus_en_guerison = individus.filter(sante__etat='GUERISON')  
+    individus_morts = elevage.individus.filter(sante__etat='MORT')  
     # actualData = serializers.serialize('json', individus, fields=('id', 'sexe', 'age', 'etat', 'sante'))
     actualData = {
         'model': 'elevage.Elevage',
@@ -82,20 +89,20 @@ def dashboard(request, elevage_id):
             nbMales = individus.filter(sexe='M', etat='PRESENT').count()
             nbFemales = individus.filter(sexe='F', etat='PRESENT').count()
             
-            if action['SellMales'] > nbMales or action['SellFemales'] > nbFemales:  # Controlla se ci sono abbastanza lapini da vendere
+            if action['SellMales'] > nbMales or action['SellFemales'] > nbFemales:  
                 form.add_error(None, "Pas assez de lapins disponibles.")
             else:
                 totalAchat = action['BuyCages'] * Rules.objects.first().cagePrice + action['BuyFood'] * Rules.objects.first().foodPrice
-                if totalAchat > elevage.solde:  # Controlla se c'è abbastanza denaro
+                if totalAchat > elevage.solde:  
                     form.add_error(None, "Pas assez d'argent.")
                 else:
-                    # Aggiorna i valori
+                    
                     elevage.solde -= totalAchat
                     elevage.nb_cages += action['BuyCages']
                     elevage.quantite_nourriture -= action['BuyFood']
                     elevage.save()
                     
-                    # Aggiorna gli individui
+                    
                     soldMales = individus.filter(sexe='M', etat='PRESENT')[:action['SellMales']]
                     soldFemales = individus.filter(sexe='F', etat='PRESENT')[:action['SellFemales']]
                     nbSold = 0
@@ -121,16 +128,15 @@ def dashboard(request, elevage_id):
                     
                     elevage.nbTurn += 1
                     elevage.save()
-                    
+            
+            elevage.heal_guérison()        
             elevage.contaminate_if_any_sick()
                     
-            # Gestisci l'acquisto di medicine tramite il modello
             if action['BuyMedicine'] > 0:
                 success, message = elevage.buy_medicine_and_heal(action['BuyMedicine'])
                 if not success:
                     form.add_error(None, message)
 
-            # Controlla se il gioco è finito
             if elevage.individus.filter(etat='PRESENT').count() == 0:
                 elevage.delete()
                 return redirect('elevage_gameover')
@@ -147,7 +153,7 @@ def dashboard(request, elevage_id):
         'individus_en_guerison': individus_en_guerison,
         'individus_morts': individus_morts,
         'form': form, 
-        'message': message,  # Passa il messaggio al template
+        'message': message,  
         'elevage_fields': elevage.getFieldsAndValues(),
         'actualData': actualData,
     })
