@@ -8,10 +8,9 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
-    profile = UserProfile.objects.get(user=request.user)
+    
     print (f"profile={profile}")
     return render(request, 'elevage/home.html', {
-        'userprofile': profile
     })
 
 def rules(request):
@@ -182,7 +181,9 @@ def inscription(request):
                 user=user,
                 profile_picture=selected_image
             )
-            return render(request,'elevage/home.html')
+            profile = UserProfile.objects.get(user=request.user)
+            return render(request, 'elevage/home.html', {
+            'userpicture': 'elevage/'+profile.profile_picture })
         else:
             return render(request, 'elevage/inscription.html', {
                 'form': form,
