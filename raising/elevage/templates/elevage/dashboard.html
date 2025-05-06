@@ -2,13 +2,9 @@
 
 {% block content %}
   <div class="container">
-    
     <h1 class="h1-dashboard">{{ elevage.nom }}</h1>
-     <!---->
-    <div class="row">
-      <!---->
-    <div class="columns">
-      
+      <!--first column-->
+    <div class="full-width-columns">
   <!-- lieu pour controler le changement de graphes -->
       <div class="chart-section">
         <div class="chart-controls">
@@ -22,8 +18,6 @@
           <canvas id="farm-chart" width="400" height="400"></canvas>
         </div>
     <!--the containner for the table-->
-    
-      
         <div id="table-view" class="view-container">
           <div class="info-box">
             <h2>Informations générales :</h2>
@@ -34,24 +28,16 @@
             </ul>
           </div>
         </div>
-        <!---->
       </div>
     </div>
-     <!---->
-      
-     <div class="column">
-      <!---->
-
+      <!--second column-->
+      <div class="full-width-columns">
         <h2>Individus</h2>
-
-        <!---->
         <div class="population-buttons">
-          <!---->
-
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
         <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
-       
-            <!--l'age pour males-->
+        </div>  
+        <!--l'age pour males-->
         <div id="popupMales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupMales')"> X </span>
@@ -63,11 +49,9 @@
                 <button class="chart-btn  " data-view="chart" data-type="bar">bar</button>
                 <button class="chart-btn " data-view="chart" data-type="pie">pie</button>
               </div>
-
               <div id="male-chart-view" class="view-container" style="display:none;">
                 <canvas id="male-chart" width="400" height="400"></canvas>
               </div>
-
               <div id="male-table-view" class="view-container">
                 <div class="info-box">
                   <h2>Males :</h2>
@@ -83,12 +67,8 @@
             </div>
           </div>
         </div>
-        
-  
          <!--l'age pour males-->
-
          <!--l'age pour femelles-->
-
          <div id="popupFemales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupFemales')"> X </span>
@@ -119,16 +99,15 @@
             </div>
           </div>
         </div>
-      </div>
+    
+      
       <!---->
-    </div>
-  </div>
+    
+  
       <!--l'age pour femelles-->
       
       <!--create the graphe for the changement with the tour-->
        <!---->
-      <div class="row">
-      <div class="full-width-column">
       <div class="trend-section">
         <h2>Évolution de l'élevage</h2>
         <div class="chart-controls">
@@ -145,13 +124,13 @@
     </div>
      <!---->
   </div>
-</div>
+
 
   
     <!--create the graphe for the changement with the tour-->
       <!---->
-      <div class="row">
-      <div class="full-width-column">
+     
+      <div class="full-width-columns">
         <!---->
       <div class="form-box">
         <h2>Actions du tour</h2>
@@ -174,13 +153,14 @@
           {% endfor %}
         </ul>
       {% endif %}
-    </div>
+    
 
     <a href="{% url 'elevage_liste' %}">Retour à la liste</a>
   </div>
+</div>
+
    <!---->
-</div>
-</div>
+
 
 
   <a onclick="openPopup('chatbotPopup')" 
