@@ -1,9 +1,25 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
+
+<style>
+    .profile-icon {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border: 2px solid transparent;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: border 0.3s ease;
+      }
+    </style>
 
 <div class="menu-container">
     <h1>Raibbing Simulator</h1>
+    <h2> Bienvenue {{user.username}} </h2>
+    <img src="{% static userpicture %}" alt="Image de profil" class ="profile-icon"> 
 
     <div class="menu-buttons">
         <a href="{% url 'elevage_nouveau' %}">

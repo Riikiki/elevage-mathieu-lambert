@@ -1,13 +1,62 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Inscription{% endblock %}
+
 {% block content %}
   <h2>Créer un compte pour jouer</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
+    <input type="hidden" name="selected_image" id="selected_image">
+
+    <h3>Icône de profil</h3>
+    <div class="icon-selection">
+      <img src="{% static 'elevage/lapin_vert.jpg' %}" data-id="lapin_vert.jpg" onclick="selectImage(this)" class="profile-icon">
+      <img src="{% static 'elevage/lapin_noir.jpg' %}" data-id="lapin_noir.jpg" onclick="selectImage(this)" class="profile-icon">
+      <img src="{% static 'elevage/lapin_blanc.jpg' %}" data-id="lapin_blanc.jpg" onclick="selectImage(this)" class="profile-icon">
+      <img src="{% static 'elevage/lapin_orange.jpg' %}" data-id="lapin_orange.jpg" onclick="selectImage(this)" class="profile-icon">
+      <img src="{% static 'elevage/lapin_rose.jpg' %}" data-id="lapin_rose.jpg" onclick="selectImage(this)" class="profile-icon">
+      <img src="{% static 'elevage/lapin_basique.jpg' %}" data-id="lapin_basique.jpg" onclick="selectImage(this)" class="profile-icon">
+    </div>
+
     <button type="submit">S’inscrire</button>
   </form>
+
+  <style>
+    .icon-selection {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+
+    .profile-icon {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border: 2px solid transparent;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: border 0.3s ease;
+    }
+
+    .profile-icon:hover {
+      border-color: #888;
+    }
+
+    .profile-icon.selected {
+      border-color: #007bff;
+    }
+  </style>
+
+  <script>
+    function selectImage(img) {
+
+      document.querySelectorAll('.profile-icon').forEach(i => i.classList.remove('selected'));
+
+      img.classList.add('selected');
+
+      document.getElementById('selected_image').value = img.dataset.id;
+    }
+  </script>
 {% endblock %}
-
-

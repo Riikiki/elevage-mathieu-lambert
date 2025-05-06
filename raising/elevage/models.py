@@ -193,4 +193,11 @@ class Individu(models.Model):
             "Age": self.age,
             "État": self.etat,
         }
-    
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.TextField(null=True, blank=True)
+
+    def __str__(self):
+        return self.user.username

@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action, InscriptionForm
-from .models import Elevage, Individu, Rules
+from .models import Elevage, Individu, Rules, UserProfile
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login
@@ -8,7 +8,11 @@ from django.contrib.auth.decorators import login_required
 
 @login_required
 def home(request):
-    return render(request, 'elevage/home.html')
+    profile = UserProfile.objects.get(user=request.user)
+    print (f"profile={profile}")
+    return render(request, 'elevage/home.html', {
+        'userprofile': profile
+    })
 
 def rules(request):
     return render(request, 'elevage/rules.html')
@@ -156,7 +160,10 @@ def connexion(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             auth_login(request, user)
-            return render(request,'elevage/home.html')
+            profile = UserProfile.objects.get(user=request.user)
+            return render(request, 'elevage/home.html', {
+            'userpicture': 'elevage/'+profile.profile_picture })
+        
         else:
             return render(request, 'registration/connexion.html', {'error': 'Identifiants invalides.'})
     else:
@@ -164,12 +171,18 @@ def connexion(request):
 
 
 def inscription(request):
+    
     if request.method == "POST":
         form = InscriptionForm(request.POST)
         if form.is_valid():
             user = form.save()
+            selected_image = request.POST.get('selected_image')
             auth_login (request, user)
-            return render(request, 'elevage/home.html')
+            UserProfile.objects.create(
+                user=user,
+                profile_picture=selected_image
+            )
+            return render(request,'elevage/home.html')
         else:
             return render(request, 'elevage/inscription.html', {
                 'form': form,

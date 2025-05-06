@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+
 # Authentification pour compte
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/mes-elevages/'
