@@ -1,10 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import ElevageForm, Action
-from .models import Elevage, Individu, Rules
-from django.core import serializers
+from .forms import ElevageForm, Action, InscriptionForm
+from .models import Elevage, Individu, Rules, UserProfile
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth import authenticate
+from django.contrib.auth import login as auth_login
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def home(request):
-    return render(request, 'elevage/home.html')
+    
+    print (f"profile={profile}")
+    return render(request, 'elevage/home.html', {
+    })
 
 def rules(request):
     rules = Rules.objects.first()
@@ -26,7 +33,10 @@ def nouveau(request):
         form = ElevageForm(request.POST)
         if form.is_valid():
             
-            elevage = form.save()
+            elevage = form.save(commit=False)
+            if request.user.is_authenticated:
+                elevage.utilisateur = request.user
+            elevage.save()
             
              # Create Individus for males
             for _ in range(elevage.nb_males):
@@ -158,6 +168,54 @@ def dashboard(request, elevage_id):
         'actualData': actualData,
     })
 
+@login_required
 def liste(request):
-    elevages = Elevage.objects.all()
+    elevages = Elevage.objects.filter(utilisateur=request.user)
     return render(request, 'elevage/liste.html', {'elevages': elevages})
+
+def login(request):
+    return render(request, 'registration/login.html')
+
+def logout(request):
+    auth_logout(request)
+    return redirect('login')
+
+def connexion(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            auth_login(request, user)
+            profile = UserProfile.objects.get(user=request.user)
+            return render(request, 'elevage/home.html', {
+            'userpicture': 'elevage/'+profile.profile_picture })
+        
+        else:
+            return render(request, 'registration/connexion.html', {'error': 'Identifiants invalides.'})
+    else:
+        return render(request, 'registration/connexion.html')
+
+
+def inscription(request):
+    
+    if request.method == "POST":
+        form = InscriptionForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            selected_image = request.POST.get('selected_image')
+            auth_login (request, user)
+            UserProfile.objects.create(
+                user=user,
+                profile_picture=selected_image
+            )
+            profile = UserProfile.objects.get(user=request.user)
+            return render(request, 'elevage/home.html', {
+            'userpicture': 'elevage/'+profile.profile_picture })
+        else:
+            return render(request, 'elevage/inscription.html', {
+                'form': form,
+            })
+    else:
+        form = InscriptionForm()
+        return render(request, 'elevage/inscription.html', {'form': form})

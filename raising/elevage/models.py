@@ -3,6 +3,7 @@ from random import randint, choice
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 class Rules(models.Model):
     
@@ -36,8 +37,9 @@ class Rules(models.Model):
 
 class Elevage(models.Model):
     
-    nom = models.CharField(max_length=100, default='Partie sans nom')
-    
+    utilisateur = models.ForeignKey(User, on_delete=models.CASCADE, null= True, blank=True, related_name="elevages")
+    nom = models.CharField(max_length=100, default='Elevage Sans nom')
+
     # Ressources
     nb_males = models.PositiveBigIntegerField(default=1)
     nb_femelles = models.PositiveBigIntegerField(default=1)
@@ -289,5 +291,9 @@ def create_sante_for_individu(sender, instance, created, **kwargs):
         Sante.objects.get_or_create(individu=instance, defaults={'etat': 'SANTE'})
 
 
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    profile_picture = models.TextField(null=True, blank=True)
 
-
+    def __str__(self):
+        return self.user.username

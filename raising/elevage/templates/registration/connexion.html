@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="list-container">
+        <h1>Connexion</h1>
+        <ul>
+            <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+                <div>
+                    <label for="username">Nom d'utilisateur :</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div>
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit">Se connecter</button>
+            </form>
+        </ul>
+    </div>
+
+{% endblock content %}
