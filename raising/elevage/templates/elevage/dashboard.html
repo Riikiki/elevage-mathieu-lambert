@@ -3,31 +3,50 @@
 {% block content %}
   <div class="container">
     
-    <h1 class="h1-dashboard">
-      {{ elevage.nom }} - {{ elevage.utilisateur }}
-    </h1>
-
+    <h1 class="h1-dashboard">{{ elevage.nom }} - {{ elevage.utilisateur }}</h1>
+     <!---->
+    <div class="row">
+      <!---->
     <div class="columns">
-      <div class="info-box">
-        <h2>Informations générales :</h2>
-        <ul class="info-list">
-          {% comment %} Trying to update along the changes but it doesn't work i want to throw myself out of the window {% endcomment %}
-          {% comment %} Nevermind I found it {% endcomment %}
-          {% for field, value in elevage.getFieldsAndValues.items%}
-            {% if field == 'solde' %}
-              <li><strong>{{ field }} (en €):</strong> {{ value }}</li>
-            {% elif field == 'quantite_nourriture' %}
-              <li><strong>{{ field }}:</strong> {{ value }} kg</li>
-            {% elif field == 'males' or field == 'femelles' %}
-            
-            {% else %}
-              <li><strong>{{ field }}:</strong> {{ value }}</li>
-            {% endif %}
-            
-          {% endfor %}
-        </ul>
       
+  <!-- lieu pour controler le changement de graphes -->
+      <div class="chart-section">
+        <div class="chart-controls">
+          <button class="chart-btn active" data-view="table">table</button>
+          <button class="chart-btn  " data-view="chart" data-type="bar">bar</button>
+          <button class="chart-btn " data-view="chart" data-type="pie">pie</button>
+          <button class="chart-btn " data-view="chart" data-type="doughnut">doughnut</button>
+        </div>
+    <!--the containner for the chart-->
+        <div id="chart-view" class="view-container" style="display:none;">
+          <canvas id="farm-chart" width="400" height="400"></canvas>
+        </div>
+    <!--the containner for the table-->
+    
+      
+        <div id="table-view" class="view-container">
+          <div class="info-box">
+            <h2>Informations générales :</h2>
+            <ul class="info-list">
+              {% for field, value in elevage.getFieldsAndValues.items %}
+                <li><strong>{{ field }}:</strong> {{ value }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <!---->
+      </div>
+    </div>
+     <!---->
+      
+     <div class="column">
+      <!---->
+
         <h2>Individus</h2>
+
+        <!---->
+        <div class="population-buttons">
+          <!---->
 
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
         <button onclick="openPopup('popupFemales')">Femelles ( {{ individus_femelles|length }} )</button>
@@ -41,41 +60,111 @@
           </ul>
         </div>
 
+       
+            <!--l'age pour males-->
         <div id="popupMales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupMales')"> X </span>
             <h3>Mâles</h3>
-            <ul>
-              {% for male in individus_males %}
-                <li>
-                  Age : {{ male.age }} mois —
-                  Santé : {% if male.sante %}{{ male.sante.get_etat_display }}{% else %}Non défini{% endif %}
-                </li>
-              {% empty %}
-                <li>Aucun mâle trouvé.</li>
-              {% endfor %}
-            </ul>
+            <!--ce que pour comparasion l'age different-->
+            <div class="chart-section">
+              <div class="chart-controls">
+                <button class="chart-btn active" data-view="table">table</button>
+                <button class="chart-btn  " data-view="chart" data-type="bar">bar</button>
+                <button class="chart-btn " data-view="chart" data-type="pie">pie</button>
+              </div>
+
+              <div id="male-chart-view" class="view-container" style="display:none;">
+                <canvas id="male-chart" width="400" height="400"></canvas>
+              </div>
+
+              <div id="male-table-view" class="view-container">
+                <div class="info-box">
+                  <h2>Males :</h2>
+                  <ul class="info-list">
+                    {% for male in individus_males %}
+                      <li>Age : {{ male.age }} mois—
+                        Santé : {% if male.sante %}{{ male.sante.get_etat_display }}{% else %}Non défini{% endif %}</li>
+                    {% empty %}
+                      <li>Aucun mâle trouvé.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
+        
+  
+         <!--l'age pour males-->
 
-        <div id="popupFemales" class="popup">
+         <!--l'age pour femelles-->
+
+         <div id="popupFemales" class="popup">
           <div class="popup-content">
             <span class="close" onclick="closePopup('popupFemales')"> X </span>
             <h3>Femelles</h3>
-            <ul>
-              {% for female in individus_femelles %}
-                <li>
-                  Age : {{ female.age }} mois —
-                  Santé : {% if female.sante %}{{ female.sante.get_etat_display }}{% else %}Non défini{% endif %}
-                </li>
-              {% empty %}
-                <li>Aucun femelle trouvée.</li>
-              {% endfor %}
-            </ul>
+            <div class="chart-section">
+              <div class="chart-controls">
+                <button class="chart-btn active" data-view="table">table</button>
+                <button class="chart-btn  " data-view="chart" data-type="bar">bar</button>
+                <button class="chart-btn " data-view="chart" data-type="pie">pie</button>
+              </div>
+
+              <div id="femelles-chart-view" class="view-container" style="display:none;">
+                <canvas id="femelles-chart" width="400" height="400"></canvas>
+              </div>
+
+              <div id="femelles-table-view" class="view-container">
+                <div class="info-box">
+                  <h2>Males :</h2>
+                  <ul class="info-list">
+                    {% for female in individus_femelles %}
+                      <li>Age : {{ female.age }} mois —
+                        Santé : {% if male.sante %}{{ male.sante.get_etat_display }}{% else %}Non défini{% endif %}</li>
+                    {% empty %}
+                      <li>Aucun femelle trouvé.</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
+      <!---->
+    </div>
+  </div>
+      <!--l'age pour femelles-->
+      
+      <!--create the graphe for the changement with the tour-->
+       <!---->
+      <div class="row">
+      <div class="full-width-column">
+      <div class="trend-section">
+        <h2>Évolution de l'élevage</h2>
+        <div class="chart-controls">
+            <button class="toggle-btn active" data-dataset="sales">Ventes</button>
+            <button class="toggle-btn active" data-dataset="births">Naissances</button>
+            <button class="toggle-btn active" data-dataset="deaths">Morts</button>
+            <button class="toggle-btn active" data-dataset="food">Nourriture_kg</button>
+            <button class="toggle-btn active" data-dataset="cages">Cages</button>
+            <button class="toggle-btn active" data-dataset="money">Sold</button>
+        </div>
+        <div class="trend-container">
+            <canvas id="trend-chart"></canvas>
+        </div>
+    </div>
+     <!---->
+  </div>
+</div>
 
+  
+    <!--create the graphe for the changement with the tour-->
+      <!---->
+      <div class="row">
+      <div class="full-width-column">
+        <!---->
       <div class="form-box">
         <h2>Actions du tour</h2>
         <form method="post">
@@ -104,6 +193,10 @@
 
     <a href="{% url 'elevage_liste' %}">Retour à la liste</a>
   </div>
+   <!---->
+</div>
+</div>
+
 
   <a onclick="openPopup('chatbotPopup')" 
      style="position: fixed; bottom: 20px; right: 20px; background: #4CAF50; color: white; padding: 10px 20px; border-radius: 50px; text-decoration: none; font-size: 18px; cursor: pointer;">
@@ -131,5 +224,372 @@
       <button onclick="sendMessage('{{ elevage.utilisateur }}', {{ elevage_id }})" style="font-size: 15px">Envoyer</button>
     </div>
   </div>
+
+  <!--add javaScripts-->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 
+    const mainChartData = {
+        labels: ['Mâles', 'Femelles', 'Nourriture (kg)', 'Cages', 'Solde (€)'],
+        datasets: [{
+            label: 'Élevage Data',
+            data: [
+                parseInt({{ individus_males|length }}),
+                parseInt({{ individus_femelles|length }}),
+                parseFloat({{ elevage.quantite_nourriture }}),
+                parseInt({{ elevage.nb_cages }}),
+                parseInt({{ elevage.solde }})
+            ],
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(153, 102, 255, 0.6)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    
+    // 
+    const ageChartData = {
+        labels: {{ age_distribution.labels|safe }},
+        datasets: [{
+            label: 'Mâles',
+            data: {{ age_distribution.male_data|safe }},
+            backgroundColor: [
+                'rgba(54, 162, 235, 0.6)',
+                'rgba(255, 99, 132, 0.6)',
+                'rgba(75, 192, 192, 0.6)',
+                'rgba(255, 206, 86, 0.6)',
+                'rgba(153, 102, 255, 0.6)'
+            ],
+            borderColor: [
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 99, 132, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(153, 102, 255, 1)'
+            ],
+            borderWidth: 1
+        }]
+    };
+    //
+    const FemellesageChartData = {
+      labels: {{ age_distribution.labels|safe }},
+      datasets: [{
+          label: 'femelles',
+          data: {{ age_distribution.female_data|safe }},
+          backgroundColor: [
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
+              'rgba(255, 206, 86, 0.6)',
+              'rgba(153, 102, 255, 0.6)'
+          ],
+          borderColor: [
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 99, 132, 1)',
+              'rgba(75, 192, 192, 1)',
+              'rgba(255, 206, 86, 1)',
+              'rgba(153, 102, 255, 1)'
+          ],
+          borderWidth: 1
+      }]
+  };
+    
+    let currentChart = null;
+    let ageChart = null;
+    let femellesageChart=null;
+    
+    // initialtion the chart
+    function initChart(type) {
+        const ctx = document.getElementById('farm-chart').getContext('2d');
+        if (currentChart) {
+            currentChart.destroy();
+        }
+        currentChart = new Chart(ctx, {
+            type: type,
+            data: mainChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    
+    // 
+    function initAgeChart(type) {
+        const ctx = document.getElementById('male-chart').getContext('2d');
+        if (ageChart) {
+            ageChart.destroy();
+        }
+        ageChart = new Chart(ctx, {
+            type: type,
+            data: ageChartData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.dataset.label}: ${context.raw}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    //
+    function initFemellesAgeChart(type) {
+      const ctx = document.getElementById('femelles-chart').getContext('2d');
+      if (femellesageChart) {
+        femellesageChart.destroy();
+      }
+      femellesageChart = new Chart(ctx, {
+          type: type,
+          data:  FemellesageChartData,
+          options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: {
+                  legend: {
+                      position: 'top',
+                  },
+                  tooltip: {
+                      callbacks: {
+                          label: function(context) {
+                              return `${context.dataset.label}: ${context.raw}`;
+                          }
+                      }
+                  }
+              }
+          }
+      });
+  }
+    
+    //change the chart
+    function switchMainView(view, chartType) {
+        //
+        document.querySelectorAll('#chart-view, #table-view').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        // choose the  styple de graph
+        if (view === 'chart') {
+            document.getElementById('chart-view').style.display = 'block';
+            initChart(chartType);
+        } else {
+            document.getElementById('table-view').style.display = 'block';
+        }
+        
+        // update 
+        document.querySelectorAll('.chart-section .chart-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+    
+    // 
+    function switchAgeView(view, chartType) {
+        document.querySelectorAll('#male-chart-view, #male-table-view').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        if (view === 'chart') {
+            document.getElementById('male-chart-view').style.display = 'block';
+            initAgeChart(chartType);
+        } else {
+            document.getElementById('male-table-view').style.display = 'block';
+        }
+        
+        document.querySelectorAll('#popupMales .chart-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+    //
+    function switchFemellesAgeView(view, chartType) {
+      document.querySelectorAll('#femelles-chart-view, #femelles-table-view').forEach(el => {
+          el.style.display = 'none';
+      });
+      
+      if (view === 'chart') {
+          document.getElementById('femelles-chart-view').style.display = 'block';
+          initFemellesAgeChart(chartType);
+      } else {
+          document.getElementById('femelles-table-view').style.display = 'block';
+      }
+      
+      document.querySelectorAll('#popupFemales .chart-btn').forEach(btn => {
+          btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+  }
+    
+    // cobination with the boutton
+    document.querySelectorAll('.chart-section .chart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const view = this.getAttribute('data-view');
+            const chartType = this.getAttribute('data-type');
+            switchMainView(view, chartType);
+        });
+    });
+    
+    // 
+    document.querySelectorAll('#popupMales .chart-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const view = this.getAttribute('data-view');
+            const chartType = this.getAttribute('data-type');
+            switchAgeView(view, chartType);
+        });
+    });
+    //
+    document.querySelectorAll('#popupFemales .chart-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+          const view = this.getAttribute('data-view');
+          const chartType = this.getAttribute('data-type');
+          switchFemellesAgeView(view, chartType);
+      });
+  });
+    // default
+    document.querySelector('.chart-section .chart-btn[data-view="table"]').click();
+    document.querySelector('#popupMales .chart-btn[data-view="table"]').click();
+    document.querySelector('#popupFemales .chart-btn[data-view="table"]').click();
+});
+      
+  </script>
+
+  <!--the structure for the graphe for the changement with the tour-->
+<script>
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const history = {{ elevage.history|safe|default:"[]" }};
+    
+    // divide the date allowing the tour
+    const turns = [...new Set(history.map(item => item.turn))].sort((a,b) => a-b);
+    
+    // prepare the datebase
+    const datasets = {
+        sales_males: { label: "Mâles vendus", data: [], borderColor: 'rgb(54, 162, 235)' },
+        sales_females: { label: "Femelles vendues", data: [], borderColor: 'rgb(255, 99, 132)' },
+        births: { label: "Naissances", data: [], borderColor: 'rgb(75, 192, 192)' },
+        deaths: { label: "Morts", data: [], borderColor: 'rgb(255, 159, 64)' },
+        food: { label: "Nourriture (kg)", data: [], borderColor: 'rgb(153, 102, 255)' },
+        cages: { label: "Cages", data: [], borderColor: 'rgb(201, 203, 207)' },
+        money: { label: "Solde (€)", data: [], borderColor: 'rgb(255, 205, 86)' }
+    };
+  
+    // rempir the date
+    turns.forEach(turn => {
+        const turnData = history.filter(item => item.turn === turn);
+        
+        // selling
+        const sale = turnData.find(item => item.type === 'sale');
+        datasets.sales_males.data.push(sale?.details?.males_sold || 0);
+        datasets.sales_females.data.push(sale?.details?.females_sold || 0);
+        
+        // others
+        datasets.births.data.push(turnData.find(item => item.type === 'birth')?.details?.count || 0);
+        datasets.deaths.data.push(turnData.find(item => item.type === 'death')?.details?.count || 0);
+        datasets.food.data.push(turnData.find(item => item.type === 'food')?.details?.total || {{ elevage.quantite_nourriture }});
+        datasets.cages.data.push(turnData.find(item => item.type === 'cage')?.details?.total || {{ elevage.nb_cages }});
+        datasets.money.data.push(turnData.find(item => item.type === 'sale')?.details?.total || {{ elevage.solde }});
+    });
+  
+    // create the graphes
+    const ctx = document.getElementById('trend-chart').getContext('2d');
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: turns,
+            datasets: Object.values(datasets).map(ds => ({
+                ...ds,
+                hidden: false,
+                borderWidth: 2,
+                pointRadius: 3,
+                fill: false
+            }))
+        },
+        options: {
+            responsive: true,
+            interaction: {
+                mode: 'index',
+                intersect: false
+            },
+            scales: {
+                y: {
+                    type: 'linear',
+                    display: true,
+                    position: 'left',
+                    title: { display: true, text: 'Quantité' }
+                },
+                y1: {
+                    type: 'linear',
+                    display: true,
+                    position: 'right',
+                    title: { display: true, text: 'Montant (€)' },
+                    grid: { drawOnChartArea: false }
+                }
+            }
+        }
+    });
+     // update for each 5 seconds
+     function refreshChart() {
+      fetch(`/api/elevage/{{ elevage.id }}/history`)
+  .then(res => res.json())
+  .then(updateChartData);
+  }
+  setInterval(refreshChart, 5000);
+    document.querySelectorAll('.toggle-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+          this.classList.toggle('active');
+          const dataset = this.dataset.dataset;
+          
+          // dealing some special situation
+          if (dataset === 'sales') {
+              chart.setDatasetVisibility(0, this.classList.contains('active'));
+              chart.setDatasetVisibility(1, this.classList.contains('active'));
+          } else {
+              const datasetIndex = Object.keys(datasets).findIndex(key => key.startsWith(dataset));
+              if (datasetIndex >= 0) {
+                  chart.setDatasetVisibility(datasetIndex, this.classList.contains('active'));
+              }
+          }
+          
+          chart.update();
+      });
+  });
+  });
+  </script>
+      
+      
+
 
 {% endblock %}

@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ElevageForm, Action, InscriptionForm
 from .models import Elevage, Individu, Rules, UserProfile
@@ -92,6 +93,25 @@ def dashboard(request, elevage_id):
     form = Action()
     message = None
 
+    #compare l'age for the males and femelles
+    age_distribution = {
+        'labels': ['0-3 mois', '4-6 mois', '7-12 mois', '13-18 mois', '19+ mois'],
+        'male_data': [
+            individus_males.filter(age__lte=3).count(),
+            individus_males.filter(age__gt=3, age__lte=6).count(),
+            individus_males.filter(age__gt=6, age__lte=12).count(),
+            individus_males.filter(age__gt=12, age__lte=18).count(),
+            individus_males.filter(age__gt=18).count()
+        ],
+        'female_data': [
+            individus_femelles.filter(age__lte=3).count(),
+            individus_femelles.filter(age__gt=3, age__lte=6).count(),
+            individus_femelles.filter(age__gt=6, age__lte=12).count(),
+            individus_femelles.filter(age__gt=12, age__lte=18).count(),
+            individus_femelles.filter(age__gt=18).count()
+        ]
+    }
+    
     if request.method == 'POST':
         form = Action(request.POST)
         if form.is_valid():
@@ -150,9 +170,42 @@ def dashboard(request, elevage_id):
             if elevage.individus.filter(etat='PRESENT').count() == 0:
                 elevage.delete()
                 return redirect('elevage_gameover')
-
-            return redirect('elevage_dashboard', elevage_id=elevage.id)
                     
+            #noting the date of selling for every tour
+            if action['SellFemales']>0 or action['SellFemales']>0:
+                elevage.log_turn('sale',{
+                        'males_sold':action['SellMales'],
+                        'females_sold':action['SellFemales']
+                    })
+            #noting the date of birth for every tour
+            new_births = Individu.objects.filter(elevage=elevage, age=0).count()
+            if new_births > 0:
+                elevage.log_turn('birth', {'count': new_births})
+            #noting the date of death for every tour
+            deaths = Individu.objects.filter(elevage=elevage, etat='MORT').count()
+            if deaths > 0:
+                elevage.log_turn('death', {'count': deaths})
+            ##noting the date of changement of food for every tour
+            if action['BuyFood'] > 0:
+                elevage.log_turn('food', {
+                    'change': action['BuyFood'],
+                    'total': elevage.quantite_nourriture
+                    })
+            ##noting the date of the changement of cages for every tour
+            if action['BuyCages'] > 0:
+                elevage.log_turn('cage', {
+                    'change': action['BuyCages'],
+                    'total': elevage.nb_cages
+                    })
+            
+            # Check if the game is over
+            if elevage.individus.filter(etat='PRESENT').count() == 0:
+                elevage.delete()
+                return redirect('elevage_gameover')
+            
+            return redirect('elevage_dashboard', elevage_id=elevage.id)
+   
+              
                     
     return render(request, 'elevage/dashboard.html', {
         'elevage': elevage, 
@@ -166,7 +219,9 @@ def dashboard(request, elevage_id):
         'message': message,  
         'elevage_fields': elevage.getFieldsAndValues(),
         'actualData': actualData,
-    })
+        'elevage_fields': elevage.getFieldsAndValues(),
+        'age_distribution': age_distribution
+        })
 
 @login_required
 def liste(request):
