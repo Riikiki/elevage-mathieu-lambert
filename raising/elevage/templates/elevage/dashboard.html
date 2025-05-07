@@ -4,7 +4,7 @@
   <div class="container">
     <h1 class="h1-dashboard">{{ elevage.nom }}</h1>
       <!--first column-->
-    <div class="full-width-columns">
+    <div class="column">
   <!-- lieu pour controler le changement de graphes -->
       <div class="chart-section">
         <div class="chart-controls">
@@ -31,7 +31,7 @@
       </div>
     </div>
       <!--second column-->
-      <div class="full-width-columns">
+      <div class="column">
         <h2>Individus</h2>
         <div class="population-buttons">
         <button onclick="openPopup('popupMales')">Mâles ( {{ individus_males|length }} )</button>
@@ -130,7 +130,7 @@
     <!--create the graphe for the changement with the tour-->
       <!---->
      
-      <div class="full-width-columns">
+      <div class="column">
         <!---->
       <div class="form-box">
         <h2>Actions du tour</h2>
@@ -526,12 +526,8 @@
         }
     });
      // update for each 5 seconds
-     function refreshChart() {
-      fetch(`/api/elevage/{{ elevage.id }}/history`)
-  .then(res => res.json())
-  .then(updateChartData);
-  }
-  setInterval(refreshChart, 5000);
+     
+    
     document.querySelectorAll('.toggle-btn').forEach(btn => {
       btn.addEventListener('click', function() {
           this.classList.toggle('active');

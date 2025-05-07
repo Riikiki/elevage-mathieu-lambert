@@ -191,3 +191,5 @@ def dashboard(request, elevage_id):
 def liste(request):
     elevages = Elevage.objects.all()
     return render(request, 'elevage/liste.html', {'elevages': elevages})
+
+

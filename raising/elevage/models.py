@@ -135,9 +135,9 @@ class Elevage(models.Model):
             
             for individu, consumption in sortedIndividuals:
                 
-                if remainingFood >= Decimal(consumption):
+                if remainingFood >= consumption:
                     
-                    remainingFood -= Decimal(consumption)
+                    remainingFood -= consumption
                     self.quantite_nourriture = remainingFood
                     
                 else:
